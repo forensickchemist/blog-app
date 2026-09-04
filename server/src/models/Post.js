@@ -23,7 +23,9 @@ const postSchema = new mongoose.Schema(
 
     excerpt: {
       type: String,
-      maxlength: 220,
+      trim: true,
+      maxlength: [220, "Excerpt cannot exceed 220 characters"],
+      default: "",
     },
 
     coverImage: {
@@ -62,10 +64,8 @@ const postSchema = new mongoose.Schema(
   }
 );
 
-// Generate slug and excerpt before validation.
-postSchema.pre("validate", function generateSlugAndExcerpt(next) {
-  // Generate a new slug when creating a post
-  // or when the title has been changed.
+// Generate a slug when creating a post or changing its title.
+postSchema.pre("validate", function generateSlug(next) {
   if (this.title && (this.isModified("title") || !this.slug)) {
     this.slug = `${slugify(this.title, {
       lower: true,
@@ -73,25 +73,9 @@ postSchema.pre("validate", function generateSlugAndExcerpt(next) {
     })}-${Date.now().toString().slice(-5)}`;
   }
 
-  // Regenerate the excerpt whenever the content changes.
-  // This keeps the excerpt synchronized with the latest content
-  // whether the post is a draft or published.
-  if (this.isModified("content") || !this.excerpt) {
-    if (this.content) {
-      this.excerpt = this.content
-        .replace(/<[^>]*>/g, "")
-        .replace(/\s+/g, " ")
-        .trim()
-        .slice(0, 200);
-    } else {
-      this.excerpt = "";
-    }
-  }
-
   next();
 });
 
-// Text search index.
 postSchema.index({
   title: "text",
   content: "text",

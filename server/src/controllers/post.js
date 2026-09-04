@@ -4,6 +4,46 @@ import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import cloudinary from "../config/cloudinary.js";
 
+/*
+ * Generate an automatic excerpt from rich-text HTML.
+ *
+ * The first 2-3 paragraphs are preferred.
+ * HTML formatting is removed so the excerpt is plain text.
+ */
+const generateExcerpt = (content) => {
+  if (!content) return "";
+
+  const paragraphs = content
+    .match(/<p\b[^>]*>[\s\S]*?<\/p>/gi)
+    ?.map((paragraph) =>
+      paragraph
+        .replace(/<[^>]*>/g, "")
+        .replace(/&nbsp;/gi, " ")
+        .replace(/&amp;/gi, "&")
+        .replace(/&quot;/gi, '"')
+        .replace(/&#39;/gi, "'")
+        .replace(/\s+/g, " ")
+        .trim()
+    )
+    .filter(Boolean);
+
+  if (paragraphs?.length) {
+    return paragraphs
+      .slice(0, 3)
+      .join(" ")
+      .slice(0, 220)
+      .trim();
+  }
+
+  return content
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 220);
+};
+
+
 // GET /api/posts
 // Public — published posts only
 // Supports: ?page ?limit ?search ?tag ?author
@@ -104,6 +144,7 @@ export const createPost = asyncHandler(async (req, res) => {
   const {
     title,
     content,
+    excerpt,
     tags,
     status,
   } = req.body;
@@ -114,6 +155,14 @@ export const createPost = asyncHandler(async (req, res) => {
     author: req.user._id,
     status: status || "published",
   };
+
+  /*
+   * If the author provides an excerpt, use it.
+   * Otherwise generate one automatically from the content.
+   */
+  postData.excerpt = excerpt?.trim()
+    ? excerpt.trim()
+    : generateExcerpt(content);
 
   if (tags) {
     postData.tags = Array.isArray(tags)
@@ -131,8 +180,6 @@ export const createPost = asyncHandler(async (req, res) => {
     };
   }
 
-  // Post.create() triggers the Post schema pre-validate hook,
-  // which automatically generates the excerpt from content.
   const post = await Post.create(postData);
 
   await post.populate("author", "username avatarUrl");
@@ -182,6 +229,7 @@ export const updatePost = asyncHandler(async (req, res) => {
   const {
     title,
     content,
+    excerpt,
     tags,
     status,
   } = req.body;
@@ -207,6 +255,31 @@ export const updatePost = asyncHandler(async (req, res) => {
           .filter(Boolean);
   }
 
+  /*
+   * If the excerpt field is explicitly supplied:
+   *
+   * - Non-empty excerpt = author's custom excerpt
+   * - Empty excerpt = automatically generate from content
+   *
+   * If excerpt is not supplied at all, preserve the existing excerpt.
+   */
+  if (excerpt !== undefined) {
+    post.excerpt = excerpt.trim()
+      ? excerpt.trim()
+      : generateExcerpt(
+          content !== undefined ? content : post.content
+        );
+  }
+
+  /*
+   * If the content changed and the post previously had
+   * an automatically generated excerpt, there is no reliable
+   * way to know whether that excerpt was manually written.
+   *
+   * Therefore the frontend should always send the excerpt field:
+   * - custom excerpt when the author entered one
+   * - empty string when the author wants automatic generation
+   */
   if (req.file) {
     if (post.coverImage?.publicId) {
       await cloudinary.uploader
@@ -220,8 +293,6 @@ export const updatePost = asyncHandler(async (req, res) => {
     };
   }
 
-  // Saving the document triggers the Post schema pre-validate hook.
-  // If content changed, the excerpt will automatically be regenerated.
   await post.save();
 
   await post.populate("author", "username avatarUrl");
