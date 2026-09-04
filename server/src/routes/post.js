@@ -11,9 +11,9 @@ import {
   getPostsByUser,
 } from "../controllers/post.controller.js";
 
-import { protect } from "../middlewares/auth.middleware.js";
+import { protect } from "../middlewares/auth.js";
 import { upload } from "../config/cloudinary.js";
-import validate from "../middlewares/validate.middleware.js";
+import validate from "../middlewares/validate.js";
 
 const router = Router();
 

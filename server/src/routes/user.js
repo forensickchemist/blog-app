@@ -5,10 +5,10 @@ import {
   updateProfile,
   updateAvatar,
   listUsers,
-} from "../controllers/user.controller.js";
-import { protect, authorize } from "../middlewares/auth.middleware.js";
+} from "../controllers/user.js";
+import { protect, authorize } from "../middlewares/auth.js";
 import { upload } from "../config/cloudinary.js";
-import validate from "../middlewares/validate.middleware.js";
+import validate from "../middlewares/validate.js";
 
 const router = Router();
 

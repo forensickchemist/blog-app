@@ -5,12 +5,12 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 
-import errorMiddleware, { notFound } from "./middlewares/error.middleware.js";
+import errorMiddleware, { notFound } from "./middlewares/error.js";
 import ApiResponse from "./utils/ApiResponse.js";
 
-import authRoutes from "./routes/auth.routes.js";
-import userRoutes from "./routes/user.routes.js";
-import postRoutes from "./routes/post.routes.js";
+import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/user.js";
+import postRoutes from "./routes/post.js";
 
 const app = express();
 
