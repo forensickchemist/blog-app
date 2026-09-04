@@ -9,7 +9,7 @@ import {
   updatePost,
   deletePost,
   getPostsByUser,
-} from "../controllers/post.controller.js";
+} from "../controllers/post.js";
 
 import { protect } from "../middlewares/auth.js";
 import { upload } from "../config/cloudinary.js";
