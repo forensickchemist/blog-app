@@ -36,17 +36,17 @@ const authLimiter = rateLimit({
   max: 30,
   message: "Too many attempts, please try again later.",
 });
-app.use("/api/auth", authLimiter);
+app.use("/auth", authLimiter);
 
 // ---- Health check ----
-app.get("/api/health", (req, res) => {
+app.get("/health", (req, res) => {
   res.status(200).json(new ApiResponse(200, { uptime: process.uptime() }, "Server is healthy"));
 });
 
 // ---- Routes (app-specific mounting block) ----
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/posts", postRoutes);
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
+app.use("/posts", postRoutes);
 
 // ---- 404 + error handler (must stay last) ----
 app.use(notFound);
