@@ -12,10 +12,14 @@ export const getAllPosts = asyncHandler(async (req, res) => {
   const limit = Math.min(parseInt(req.query.limit, 10) || 10, 50);
   const skip = (page - 1) * limit;
 
-  const filter = { status: "published" };
+  const filter = {
+    status: "published",
+  };
 
   if (req.query.search) {
-    filter.$text = { $search: req.query.search };
+    filter.$text = {
+      $search: req.query.search,
+    };
   }
 
   if (req.query.tag) {
@@ -57,17 +61,20 @@ export const getAllPosts = asyncHandler(async (req, res) => {
 // GET /api/posts/:slug
 // Public
 export const getPostBySlug = asyncHandler(async (req, res) => {
-  const post = await Post.findOne({ slug: req.params.slug }).populate(
-    "author",
-    "username avatarUrl bio"
-  );
+  const post = await Post.findOne({
+    slug: req.params.slug,
+  }).populate("author", "username avatarUrl bio");
 
   if (!post) {
     throw new ApiError(404, "Post not found");
   }
 
   res.status(200).json(
-    new ApiResponse(200, { post }, "Post fetched")
+    new ApiResponse(
+      200,
+      { post },
+      "Post fetched"
+    )
   );
 });
 
@@ -75,7 +82,9 @@ export const getPostBySlug = asyncHandler(async (req, res) => {
 // GET /api/posts/me
 // Authenticated user — own published + draft posts
 export const getMyPosts = asyncHandler(async (req, res) => {
-  const posts = await Post.find({ author: req.user._id })
+  const posts = await Post.find({
+    author: req.user._id,
+  })
     .populate("author", "username avatarUrl")
     .sort({ createdAt: -1 });
 
@@ -92,7 +101,12 @@ export const getMyPosts = asyncHandler(async (req, res) => {
 // POST /api/posts
 // Authenticated users
 export const createPost = asyncHandler(async (req, res) => {
-  const { title, content, tags, status } = req.body;
+  const {
+    title,
+    content,
+    tags,
+    status,
+  } = req.body;
 
   const postData = {
     title,
@@ -104,7 +118,10 @@ export const createPost = asyncHandler(async (req, res) => {
   if (tags) {
     postData.tags = Array.isArray(tags)
       ? tags
-      : tags.split(",").map((t) => t.trim());
+      : tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean);
   }
 
   if (req.file) {
@@ -114,20 +131,28 @@ export const createPost = asyncHandler(async (req, res) => {
     };
   }
 
+  // Post.create() triggers the Post schema pre-validate hook,
+  // which automatically generates the excerpt from content.
   const post = await Post.create(postData);
 
   await post.populate("author", "username avatarUrl");
 
   res.status(201).json(
-    new ApiResponse(201, { post }, "Post created")
+    new ApiResponse(
+      201,
+      { post },
+      "Post created"
+    )
   );
 });
 
 
-// Find a post owned by the current user
+// Find a post owned by the current user.
 // Admins are allowed to access any post.
 const findOwnedPost = async (req) => {
-  const post = await Post.findOne({ slug: req.params.slug });
+  const post = await Post.findOne({
+    slug: req.params.slug,
+  });
 
   if (!post) {
     throw new ApiError(404, "Post not found");
@@ -154,7 +179,12 @@ const findOwnedPost = async (req) => {
 export const updatePost = asyncHandler(async (req, res) => {
   const post = await findOwnedPost(req);
 
-  const { title, content, tags, status } = req.body;
+  const {
+    title,
+    content,
+    tags,
+    status,
+  } = req.body;
 
   if (title !== undefined) {
     post.title = title;
@@ -171,7 +201,10 @@ export const updatePost = asyncHandler(async (req, res) => {
   if (tags !== undefined) {
     post.tags = Array.isArray(tags)
       ? tags
-      : tags.split(",").map((t) => t.trim());
+      : tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean);
   }
 
   if (req.file) {
@@ -187,12 +220,18 @@ export const updatePost = asyncHandler(async (req, res) => {
     };
   }
 
+  // Saving the document triggers the Post schema pre-validate hook.
+  // If content changed, the excerpt will automatically be regenerated.
   await post.save();
 
   await post.populate("author", "username avatarUrl");
 
   res.status(200).json(
-    new ApiResponse(200, { post }, "Post updated")
+    new ApiResponse(
+      200,
+      { post },
+      "Post updated"
+    )
   );
 });
 
@@ -212,7 +251,11 @@ export const deletePost = asyncHandler(async (req, res) => {
   await post.deleteOne();
 
   res.status(200).json(
-    new ApiResponse(200, null, "Post deleted")
+    new ApiResponse(
+      200,
+      null,
+      "Post deleted"
+    )
   );
 });
 
@@ -220,11 +263,15 @@ export const deletePost = asyncHandler(async (req, res) => {
 // GET /api/posts/user/:username
 // Public — published posts only
 export const getPostsByUser = asyncHandler(async (req, res) => {
-  const posts = await Post.find({ status: "published" })
+  const posts = await Post.find({
+    status: "published",
+  })
     .populate({
       path: "author",
       select: "username avatarUrl",
-      match: { username: req.params.username },
+      match: {
+        username: req.params.username,
+      },
     })
     .sort({ createdAt: -1 });
 
