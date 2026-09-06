@@ -173,15 +173,20 @@ export const getAdminPosts = asyncHandler(async (req, res) => {
     };
   }
 
-  const [posts, total] = await Promise.all([
-    Post.find(filter)
-      .populate("author", "username avatarUrl")
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit),
+  const [posts, total, publishedCount, draftCount] =
+    await Promise.all([
+      Post.find(filter)
+        .populate("author", "username avatarUrl")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
 
-    Post.countDocuments(filter),
-  ]);
+      Post.countDocuments(filter),
+
+      Post.countDocuments({ status: "published" }),
+
+      Post.countDocuments({ status: "draft" }),
+    ]);
 
   res.status(200).json(
     new ApiResponse(
@@ -193,6 +198,10 @@ export const getAdminPosts = asyncHandler(async (req, res) => {
           page,
           limit,
           totalPages: Math.ceil(total / limit),
+        },
+        counts: {
+          published: publishedCount,
+          drafts: draftCount,
         },
       },
       "Admin posts fetched"

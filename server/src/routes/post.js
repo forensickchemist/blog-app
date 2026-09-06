@@ -56,8 +56,6 @@ router.get(
 router.get("/:slug", optionalAuth, getPostBySlug);
 
 
-
-
 // CREATE / UPDATE / DELETE
 
 router.post(
