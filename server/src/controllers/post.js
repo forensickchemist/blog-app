@@ -3,6 +3,7 @@ import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import cloudinary from "../config/cloudinary.js";
+import { sanitizeHtml } from "../utils/sanitizeHtml.js";
 
 /*
  * Generate an automatic excerpt from rich-text HTML.
@@ -10,7 +11,7 @@ import cloudinary from "../config/cloudinary.js";
  * The first 2-3 paragraphs are preferred.
  * HTML formatting is removed so the excerpt is plain text.
  */
-const generateExcerpt = (content) => {
+const generateExcerpt = (sanitizedContent) => {
   if (!content) return "";
 
   const paragraphs = content
@@ -99,21 +100,25 @@ export const getAllPosts = asyncHandler(async (req, res) => {
 
 
 // GET /api/posts/:slug
-// Public
+// Public for published
 export const getPostBySlug = asyncHandler(async (req, res) => {
   const post = await Post.findOne({
     slug: req.params.slug,
-  }).populate("author", "username avatarUrl bio");
+    status: "published",
+  }).populate(
+    "author",
+    "username avatarUrl bio"
+  );
 
   if (!post) {
     throw new ApiError(404, "Post not found");
   }
 
-  res.status(200).json(
+  res.json(
     new ApiResponse(
       200,
-      { post },
-      "Post fetched"
+      post,
+      "Post fetched successfully"
     )
   );
 });
@@ -151,7 +156,7 @@ export const createPost = asyncHandler(async (req, res) => {
 
   const postData = {
     title,
-    content,
+    content: sanitizedContent,
     author: req.user._id,
     status: status || "published",
   };
@@ -239,7 +244,7 @@ export const updatePost = asyncHandler(async (req, res) => {
   }
 
   if (content !== undefined) {
-    post.content = content;
+    post.content = sanitizeHtml(content);
   }
 
   if (status !== undefined) {
@@ -267,7 +272,9 @@ export const updatePost = asyncHandler(async (req, res) => {
     post.excerpt = excerpt.trim()
       ? excerpt.trim()
       : generateExcerpt(
-          content !== undefined ? content : post.content
+          content !== undefined
+            ? sanitizeHtml(content)
+            : post.content
         );
   }
 
