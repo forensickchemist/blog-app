@@ -42,9 +42,6 @@ router.get("/user/:username", getPostsByUser);
 // Current user's published + draft posts
 router.get("/me", protect, getMyPosts);
 
-// SINGLE POST
-router.get("/:slug", optionalAuth, getPostBySlug);
-
 // ADMIN ROUTES
 
 // All posts, including drafts
@@ -54,6 +51,11 @@ router.get(
   authorize("admin"),
   getAdminPosts
 );
+
+// SINGLE POST
+router.get("/:slug", optionalAuth, getPostBySlug);
+
+
 
 
 // CREATE / UPDATE / DELETE
