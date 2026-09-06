@@ -12,6 +12,8 @@ import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
 import postRoutes from "./routes/post.js";
 
+import { csrfProtection } from "./middlewares/csrf.js";
+
 const app = express();
 
 // ---- Security & parsing ----
@@ -25,6 +27,8 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
+
+app.use(csrfProtection);
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
