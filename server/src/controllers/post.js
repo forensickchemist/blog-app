@@ -12,9 +12,9 @@ import { sanitizeHtml } from "../utils/sanitizeHtml.js";
  * HTML formatting is removed so the excerpt is plain text.
  */
 const generateExcerpt = (sanitizedContent) => {
-  if (!content) return "";
+  if (!sanitizedContent) return "";
 
-  const paragraphs = content
+  const paragraphs = sanitizedContent
     .match(/<p\b[^>]*>[\s\S]*?<\/p>/gi)
     ?.map((paragraph) =>
       paragraph
@@ -36,7 +36,7 @@ const generateExcerpt = (sanitizedContent) => {
       .trim();
   }
 
-  return content
+  return sanitizedContent
     .replace(/<[^>]*>/g, "")
     .replace(/&nbsp;/gi, " ")
     .replace(/\s+/g, " ")
@@ -166,6 +166,8 @@ export const createPost = asyncHandler(async (req, res) => {
     status,
   } = req.body;
 
+  const sanitizedContent = sanitizeHtml(content);
+
   const postData = {
     title,
     content: sanitizedContent,
@@ -179,7 +181,7 @@ export const createPost = asyncHandler(async (req, res) => {
    */
   postData.excerpt = excerpt?.trim()
     ? excerpt.trim()
-    : generateExcerpt(content);
+    : generateExcerpt(sanitizedContent);
 
   if (tags) {
     postData.tags = Array.isArray(tags)
