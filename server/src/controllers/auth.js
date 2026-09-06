@@ -19,11 +19,10 @@ const cookieOptions = {
 const sendAuthResponse = (user, statusCode, res, message) => {
   const token = signToken(user._id);
   res.cookie(process.env.COOKIE_NAME || "token", token, cookieOptions);
-
   return res.status(statusCode).json(
     new ApiResponse(
       statusCode,
-      { user: user.toSafeObject(), token },
+      { user: user.toSafeObject() },
       message
     )
   );
