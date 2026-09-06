@@ -5,13 +5,14 @@ import {
   getAllPosts,
   getPostBySlug,
   getMyPosts,
+  getAdminPosts,
   createPost,
   updatePost,
   deletePost,
   getPostsByUser,
 } from "../controllers/post.js";
 
-import { protect, optionalAuth } from "../middlewares/auth.js";
+import { protect, optionalAuth, authorize } from "../middlewares/auth.js";
 import { upload } from "../config/cloudinary.js";
 import validate from "../middlewares/validate.js";
 
@@ -43,6 +44,16 @@ router.get("/me", protect, getMyPosts);
 
 // SINGLE POST
 router.get("/:slug", optionalAuth, getPostBySlug);
+
+// ADMIN ROUTES
+
+// All posts, including drafts
+router.get(
+  "/admin",
+  protect,
+  authorize("admin"),
+  getAdminPosts
+);
 
 
 // CREATE / UPDATE / DELETE

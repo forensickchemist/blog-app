@@ -154,6 +154,52 @@ export const getMyPosts = asyncHandler(async (req, res) => {
   );
 });
 
+// GET /api/posts/admin
+// Admin-only — all posts, including drafts
+export const getAdminPosts = asyncHandler(async (req, res) => {
+  const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+  const limit = Math.min(parseInt(req.query.limit, 10) || 10, 50);
+  const skip = (page - 1) * limit;
+
+  const filter = {};
+
+  if (req.query.status) {
+    filter.status = req.query.status;
+  }
+
+  if (req.query.search) {
+    filter.$text = {
+      $search: req.query.search,
+    };
+  }
+
+  const [posts, total] = await Promise.all([
+    Post.find(filter)
+      .populate("author", "username avatarUrl")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+
+    Post.countDocuments(filter),
+  ]);
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        posts,
+        pagination: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
+      "Admin posts fetched"
+    )
+  );
+});
+
 
 // POST /api/posts
 // Authenticated users
