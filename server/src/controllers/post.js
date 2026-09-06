@@ -102,25 +102,37 @@ export const getAllPosts = asyncHandler(async (req, res) => {
 // GET /api/posts/:slug
 // Public for published
 export const getPostBySlug = asyncHandler(async (req, res) => {
-  const post = await Post.findOne({
-    slug: req.params.slug,
-    status: "published",
-  }).populate(
-    "author",
-    "username avatarUrl bio"
-  );
+  const post = await Post.findOne({ slug: req.params.slug })
+    .populate("author", "username avatarUrl bio");
 
   if (!post) {
     throw new ApiError(404, "Post not found");
   }
 
-  res.json(
-    new ApiResponse(
-      200,
-      post,
-      "Post fetched successfully"
-    )
-  );
+  // Published posts are publicly accessible.
+  if (post.status === "published") {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { post }, "Post fetched successfully"));
+  }
+
+  // Drafts require authentication and ownership/admin access.
+  if (!req.user) {
+    throw new ApiError(404, "Post not found");
+  }
+
+  const isOwner =
+    post.author._id.toString() === req.user._id.toString();
+
+  const isAdmin = req.user.role === "admin";
+
+  if (!isOwner && !isAdmin) {
+    throw new ApiError(404, "Post not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { post }, "Post fetched successfully"));
 });
 
 

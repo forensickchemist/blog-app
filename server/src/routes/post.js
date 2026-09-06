@@ -11,7 +11,7 @@ import {
   getPostsByUser,
 } from "../controllers/post.js";
 
-import { protect } from "../middlewares/auth.js";
+import { protect, optionalAuth } from "../middlewares/auth.js";
 import { upload } from "../config/cloudinary.js";
 import validate from "../middlewares/validate.js";
 
@@ -42,7 +42,7 @@ router.get("/user/:username", getPostsByUser);
 router.get("/me", protect, getMyPosts);
 
 // SINGLE POST
-router.get("/:slug", getPostBySlug);
+router.get("/:slug", optionalAuth, getPostBySlug);
 
 
 // CREATE / UPDATE / DELETE
