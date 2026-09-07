@@ -73,7 +73,7 @@ export const getAllPosts = asyncHandler(async (req, res) => {
 
   const [posts, total] = await Promise.all([
     Post.find(filter)
-      .populate("author", "username avatarUrl")
+      .populate("author", "username avatarUrl role")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit),
@@ -142,7 +142,7 @@ export const getMyPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find({
     author: req.user._id,
   })
-    .populate("author", "username avatarUrl")
+    .populate("author", "username avatarUrl role")
     .sort({ createdAt: -1 });
 
   res.status(200).json(
@@ -176,7 +176,7 @@ export const getAdminPosts = asyncHandler(async (req, res) => {
   const [posts, total, publishedCount, draftCount] =
     await Promise.all([
       Post.find(filter)
-        .populate("author", "username avatarUrl")
+        .populate("author", "username avatarUrl role")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit),
@@ -256,7 +256,7 @@ export const createPost = asyncHandler(async (req, res) => {
 
   const post = await Post.create(postData);
 
-  await post.populate("author", "username avatarUrl");
+  await post.populate("author", "username avatarUrl role");
 
   res.status(201).json(
     new ApiResponse(
@@ -371,7 +371,7 @@ export const updatePost = asyncHandler(async (req, res) => {
 
   await post.save();
 
-  await post.populate("author", "username avatarUrl");
+  await post.populate("author", "username avatarUrl role");
 
   res.status(200).json(
     new ApiResponse(
@@ -415,7 +415,7 @@ export const getPostsByUser = asyncHandler(async (req, res) => {
   })
     .populate({
       path: "author",
-      select: "username avatarUrl",
+      select: "username avatarUrl role",
       match: {
         username: req.params.username,
       },
