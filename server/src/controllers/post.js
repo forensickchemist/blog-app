@@ -1,9 +1,11 @@
 import Post from "../models/Post.js";
+import User from "../models/User.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import cloudinary from "../config/cloudinary.js";
 import { sanitizeHtml } from "../utils/sanitizeHtml.js";
+
 
 /*
  * Generate an automatic excerpt from rich-text HTML.
@@ -44,13 +46,55 @@ const generateExcerpt = (sanitizedContent) => {
     .slice(0, 220);
 };
 
+const buildSearchFilter = async (search) => {
+  if (!search?.trim()) {
+    return {};
+  }
+
+  const searchTerm = search.trim();
+
+  const users = await User.find({
+    username: {
+      $regex: searchTerm,
+      $options: "i",
+    },
+  }).select("_id");
+
+  const authorIds = users.map((user) => user._id);
+
+  return {
+    $or: [
+      {
+        $text: {
+          $search: searchTerm,
+        },
+      },
+      ...(authorIds.length
+        ? [{ author: { $in: authorIds } }]
+        : []),
+    ],
+  };
+};
+
 
 // GET /api/posts
 // Public — published posts only
 // Supports: ?page ?limit ?search ?tag ?author
+// GET /api/posts
+// Public — published posts only
+// Supports: ?page ?limit ?search ?tag ?author
+
 export const getAllPosts = asyncHandler(async (req, res) => {
-  const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
-  const limit = Math.min(parseInt(req.query.limit, 10) || 10, 50);
+  const page = Math.max(
+    parseInt(req.query.page, 10) || 1,
+    1
+  );
+
+  const limit = Math.min(
+    parseInt(req.query.limit, 10) || 10,
+    50
+  );
+
   const skip = (page - 1) * limit;
 
   const filter = {
@@ -58,9 +102,11 @@ export const getAllPosts = asyncHandler(async (req, res) => {
   };
 
   if (req.query.search) {
-    filter.$text = {
-      $search: req.query.search,
-    };
+    const searchFilter = await buildSearchFilter(
+      req.query.search
+    );
+
+    Object.assign(filter, searchFilter);
   }
 
   if (req.query.tag) {
@@ -73,7 +119,10 @@ export const getAllPosts = asyncHandler(async (req, res) => {
 
   const [posts, total] = await Promise.all([
     Post.find(filter)
-      .populate("author", "username avatarUrl role")
+      .populate(
+        "author",
+        "username avatarUrl role"
+      )
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit),
@@ -154,11 +203,20 @@ export const getMyPosts = asyncHandler(async (req, res) => {
   );
 });
 
+
 // GET /api/posts/admin
 // Admin-only — all posts, including drafts
 export const getAdminPosts = asyncHandler(async (req, res) => {
-  const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
-  const limit = Math.min(parseInt(req.query.limit, 10) || 10, 50);
+  const page = Math.max(
+    parseInt(req.query.page, 10) || 1,
+    1
+  );
+
+  const limit = Math.min(
+    parseInt(req.query.limit, 10) || 10,
+    50
+  );
+
   const skip = (page - 1) * limit;
 
   const filter = {};
@@ -168,37 +226,52 @@ export const getAdminPosts = asyncHandler(async (req, res) => {
   }
 
   if (req.query.search) {
-    filter.$text = {
-      $search: req.query.search,
-    };
+    const searchFilter = await buildSearchFilter(
+      req.query.search
+    );
+
+    Object.assign(filter, searchFilter);
   }
 
-  const [posts, total, publishedCount, draftCount] =
-    await Promise.all([
-      Post.find(filter)
-        .populate("author", "username avatarUrl role")
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit),
+  const [
+    posts,
+    total,
+    publishedCount,
+    draftCount,
+  ] = await Promise.all([
+    Post.find(filter)
+      .populate(
+        "author",
+        "username avatarUrl role"
+      )
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
 
-      Post.countDocuments(filter),
+    Post.countDocuments(filter),
 
-      Post.countDocuments({ status: "published" }),
+    Post.countDocuments({
+      status: "published",
+    }),
 
-      Post.countDocuments({ status: "draft" }),
-    ]);
+    Post.countDocuments({
+      status: "draft",
+    }),
+  ]);
 
   res.status(200).json(
     new ApiResponse(
       200,
       {
         posts,
+
         pagination: {
           total,
           page,
           limit,
           totalPages: Math.ceil(total / limit),
         },
+
         counts: {
           published: publishedCount,
           drafts: draftCount,
@@ -208,7 +281,6 @@ export const getAdminPosts = asyncHandler(async (req, res) => {
     )
   );
 });
-
 
 // POST /api/posts
 // Authenticated users
