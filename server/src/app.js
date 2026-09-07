@@ -11,6 +11,7 @@ import ApiResponse from "./utils/ApiResponse.js";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
 import postRoutes from "./routes/post.js";
+import commentRoutes from "./routes/comment.js";
 
 import { csrfProtection } from "./middlewares/csrf.js";
 
@@ -52,6 +53,7 @@ app.get("/health", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
+app.use("/", commentRoutes);
 
 // ---- 404 + error handler (must stay last) ----
 app.use(notFound);
