@@ -46,44 +46,59 @@ const generateExcerpt = (sanitizedContent) => {
     .slice(0, 220);
 };
 
-const buildSearchFilter = async (search) => {
+const getSearchPostIds = async (search) => {
   if (!search?.trim()) {
-    return {};
+    return null;
   }
 
   const searchTerm = search.trim();
 
-  const users = await User.find({
-    username: {
-      $regex: searchTerm,
-      $options: "i",
-    },
-  }).select("_id");
-
-  const authorIds = users.map((user) => user._id);
-
-  return {
-    $or: [
-      {
-        $text: {
-          $search: searchTerm,
-        },
+  const [textPosts, users] = await Promise.all([
+    Post.find({
+      $text: {
+        $search: searchTerm,
       },
-      ...(authorIds.length
-        ? [{ author: { $in: authorIds } }]
-        : []),
-    ],
-  };
+    }).select("_id"),
+
+    User.find({
+      username: {
+        $regex: searchTerm,
+        $options: "i",
+      },
+    }).select("_id"),
+  ]);
+
+  const textPostIds = textPosts.map((post) =>
+    post._id.toString()
+  );
+
+  const authorIds = users.map((user) =>
+    user._id.toString()
+  );
+
+  const authorPosts = authorIds.length
+    ? await Post.find({
+        author: {
+          $in: authorIds,
+        },
+      }).select("_id")
+    : [];
+
+  const authorPostIds = authorPosts.map((post) =>
+    post._id.toString()
+  );
+
+  return [
+    ...new Set([
+      ...textPostIds,
+      ...authorPostIds,
+    ]),
+  ];
 };
 
-
 // GET /api/posts
 // Public — published posts only
 // Supports: ?page ?limit ?search ?tag ?author
-// GET /api/posts
-// Public — published posts only
-// Supports: ?page ?limit ?search ?tag ?author
-
 export const getAllPosts = asyncHandler(async (req, res) => {
   const page = Math.max(
     parseInt(req.query.page, 10) || 1,
@@ -102,11 +117,13 @@ export const getAllPosts = asyncHandler(async (req, res) => {
   };
 
   if (req.query.search) {
-    const searchFilter = await buildSearchFilter(
+    const searchPostIds = await getSearchPostIds(
       req.query.search
     );
 
-    Object.assign(filter, searchFilter);
+    filter._id = {
+      $in: searchPostIds,
+    };
   }
 
   if (req.query.tag) {
@@ -147,7 +164,6 @@ export const getAllPosts = asyncHandler(async (req, res) => {
   );
 });
 
-
 // GET /api/posts/:slug
 // Public for published
 export const getPostBySlug = asyncHandler(async (req, res) => {
@@ -184,7 +200,6 @@ export const getPostBySlug = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { post }, "Post fetched successfully"));
 });
 
-
 // GET /api/posts/me
 // Authenticated user — own published + draft posts
 export const getMyPosts = asyncHandler(async (req, res) => {
@@ -202,7 +217,6 @@ export const getMyPosts = asyncHandler(async (req, res) => {
     )
   );
 });
-
 
 // GET /api/posts/admin
 // Admin-only — all posts, including drafts
@@ -226,11 +240,13 @@ export const getAdminPosts = asyncHandler(async (req, res) => {
   }
 
   if (req.query.search) {
-    const searchFilter = await buildSearchFilter(
+    const searchPostIds = await getSearchPostIds(
       req.query.search
     );
 
-    Object.assign(filter, searchFilter);
+    filter._id = {
+      $in: searchPostIds,
+    };
   }
 
   const [
