@@ -62,18 +62,30 @@ export const updateAvatar = asyncHandler(async (req, res) => {
     throw new ApiError(400, "No image file provided");
   }
 
-  const user = await User.findByIdAndUpdate(
-    req.user._id,
-    { avatarUrl: req.file.path },
-    { new: true }
-  );
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  // Delete the previous avatar from Cloudinary.
+  if (user.avatarPublicId) {
+    await cloudinary.uploader
+      .destroy(user.avatarPublicId)
+      .catch(() => {});
+  }
+
+  user.avatarUrl = req.file.path;
+  user.avatarPublicId = req.file.filename;
+
+  await user.save();
 
   res
     .status(200)
     .json(
       new ApiResponse(
         200,
-        { user },
+        { user: user.toSafeObject() },
         "Avatar updated"
       )
     );
@@ -146,6 +158,76 @@ export const updateUserRole = asyncHandler(async (req, res) => {
         200,
         { user: user.toSafeObject() },
         "User role updated"
+      )
+    );
+});
+
+export const deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  if (user._id.toString() === req.user._id.toString()) {
+    throw new ApiError(
+      400,
+      "You cannot delete your own account"
+    );
+  }
+
+  if (user.role === "admin") {
+    const adminCount = await User.countDocuments({
+      role: "admin",
+    });
+
+    if (adminCount <= 1) {
+      throw new ApiError(
+        400,
+        "You cannot delete the last admin"
+      );
+    }
+  }
+
+  // Delete the user's avatar from Cloudinary.
+  if (user.avatarPublicId) {
+    await cloudinary.uploader
+      .destroy(user.avatarPublicId)
+      .catch(() => {});
+  }
+
+  // Find all posts belonging to the user.
+  const posts = await Post.find({
+    author: user._id,
+  }).select("coverImage.publicId");
+
+  // Delete all post cover images from Cloudinary.
+  await Promise.all(
+    posts
+      .map((post) => post.coverImage?.publicId)
+      .filter(Boolean)
+      .map((publicId) =>
+        cloudinary.uploader
+          .destroy(publicId)
+          .catch(() => {})
+      )
+  );
+
+  // Delete all posts belonging to the user.
+  await Post.deleteMany({
+    author: user._id,
+  });
+
+  // Finally delete the user.
+  await user.deleteOne();
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        null,
+        "User and all associated content deleted"
       )
     );
 });
