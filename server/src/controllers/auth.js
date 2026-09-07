@@ -31,20 +31,40 @@ const sendAuthResponse = (user, statusCode, res, message) => {
 export const register = asyncHandler(async (req, res) => {
   const { email, username, password } = req.body;
 
-  const existing = await User.findOne({ $or: [{ email }, { username }] });
+  // Normalize username before checking and saving
+  const normalizedUsername = username?.trim().toLowerCase();
+
+  const existing = await User.findOne({
+    $or: [
+      { email },
+      { username: normalizedUsername },
+    ],
+  });
+
   if (existing) {
     throw new ApiError(409, "Email or username is already in use");
   }
 
-  const user = await User.create({ email, username, password });
+  const user = await User.create({
+    email,
+    username: normalizedUsername,
+    password,
+  });
+
   sendAuthResponse(user, 201, res, "Registration successful");
 });
 
 export const login = asyncHandler(async (req, res) => {
   const { emailOrUsername, password } = req.body;
 
+  const normalizedEmailOrUsername =
+    emailOrUsername.trim().toLowerCase();
+
   const user = await User.findOne({
-    $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
+    $or: [
+      { email: normalizedEmailOrUsername },
+      { username: normalizedEmailOrUsername },
+    ],
   }).select("+password");
 
   if (!user || !(await user.comparePassword(password))) {
@@ -60,5 +80,7 @@ export const logout = asyncHandler(async (req, res) => {
 });
 
 export const getMe = asyncHandler(async (req, res) => {
-  res.status(200).json(new ApiResponse(200, { user: req.user }, "Current user"));
+  res.status(200).json(
+    new ApiResponse(200, { user: req.user }, "Current user")
+  );
 });
