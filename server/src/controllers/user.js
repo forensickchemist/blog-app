@@ -89,8 +89,37 @@ export const updateAvatar = asyncHandler(async (req, res) => {
 });
 
 // Admin-only: list all users
+// Supports: ?page ?limit ?search
 export const listUsers = asyncHandler(async (req, res) => {
-  const users = await User.find().sort({ createdAt: -1 });
+  const page = Math.max(
+    parseInt(req.query.page, 10) || 1,
+    1
+  );
+
+  const limit = Math.min(
+    parseInt(req.query.limit, 10) || 10,
+    50
+  );
+
+  const skip = (page - 1) * limit;
+
+  const filter = {};
+
+  if (req.query.search?.trim()) {
+    filter.username = {
+      $regex: req.query.search.trim(),
+      $options: "i",
+    };
+  }
+
+  const [users, total] = await Promise.all([
+    User.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+
+    User.countDocuments(filter),
+  ]);
 
   res
     .status(200)
@@ -99,7 +128,13 @@ export const listUsers = asyncHandler(async (req, res) => {
         200,
         {
           users,
-          count: users.length,
+          count: total,
+          pagination: {
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit),
+          },
         },
         "Users fetched"
       )

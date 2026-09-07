@@ -202,17 +202,67 @@ export const getPostBySlug = asyncHandler(async (req, res) => {
 
 // GET /api/posts/me
 // Authenticated user — own published + draft posts
+// Supports: ?page ?limit ?search
 export const getMyPosts = asyncHandler(async (req, res) => {
-  const posts = await Post.find({
+  const page = Math.max(
+    parseInt(req.query.page, 10) || 1,
+    1
+  );
+
+  const limit = Math.min(
+    parseInt(req.query.limit, 10) || 10,
+    50
+  );
+
+  const skip = (page - 1) * limit;
+
+  const filter = {
     author: req.user._id,
-  })
-    .populate("author", "username avatarUrl role")
-    .sort({ createdAt: -1 });
+  };
+
+  if (req.query.search?.trim()) {
+    const searchTerm = req.query.search.trim();
+
+    const matchingPosts = await Post.find({
+      $text: {
+        $search: searchTerm,
+      },
+    }).select("_id");
+
+    const matchingPostIds = matchingPosts.map(
+      (post) => post._id
+    );
+
+    filter._id = {
+      $in: matchingPostIds,
+    };
+  }
+
+  const [posts, total] = await Promise.all([
+    Post.find(filter)
+      .populate(
+        "author",
+        "username avatarUrl role"
+      )
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+
+    Post.countDocuments(filter),
+  ]);
 
   res.status(200).json(
     new ApiResponse(
       200,
-      { posts },
+      {
+        posts,
+        pagination: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
       "Your posts fetched"
     )
   );
@@ -220,6 +270,7 @@ export const getMyPosts = asyncHandler(async (req, res) => {
 
 // GET /api/posts/admin
 // Admin-only — all posts, including drafts
+// Supports: ?page ?limit ?search ?status
 export const getAdminPosts = asyncHandler(async (req, res) => {
   const page = Math.max(
     parseInt(req.query.page, 10) || 1,
@@ -239,7 +290,7 @@ export const getAdminPosts = asyncHandler(async (req, res) => {
     filter.status = req.query.status;
   }
 
-  if (req.query.search) {
+  if (req.query.search?.trim()) {
     const searchPostIds = await getSearchPostIds(
       req.query.search
     );
@@ -252,6 +303,7 @@ export const getAdminPosts = asyncHandler(async (req, res) => {
   const [
     posts,
     total,
+    totalPostCount,
     publishedCount,
     draftCount,
   ] = await Promise.all([
@@ -265,6 +317,8 @@ export const getAdminPosts = asyncHandler(async (req, res) => {
       .limit(limit),
 
     Post.countDocuments(filter),
+
+    Post.countDocuments({}),
 
     Post.countDocuments({
       status: "published",
@@ -289,6 +343,7 @@ export const getAdminPosts = asyncHandler(async (req, res) => {
         },
 
         counts: {
+          total: totalPostCount,
           published: publishedCount,
           drafts: draftCount,
         },
