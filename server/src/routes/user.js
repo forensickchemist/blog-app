@@ -8,6 +8,7 @@ import {
   updateAvatar,
   listUsers,
   updateUserRole,
+  deleteUser,
 } from "../controllers/user.js";
 
 import { protect, authorize } from "../middlewares/auth.js";
@@ -66,6 +67,20 @@ router.put(
   ],
   validate,
   updateUserRole
+);
+
+// Admin-only: delete user
+router.delete(
+  "/:id",
+  protect,
+  authorize("admin"),
+  [
+    param("id")
+      .isMongoId()
+      .withMessage("Invalid user ID"),
+  ],
+  validate,
+  deleteUser
 );
 
 export default router;
