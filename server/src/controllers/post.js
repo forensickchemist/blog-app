@@ -103,7 +103,7 @@ export const getAllPosts = asyncHandler(async (req, res) => {
 // Public for published
 export const getPostBySlug = asyncHandler(async (req, res) => {
   const post = await Post.findOne({ slug: req.params.slug })
-    .populate("author", "username avatarUrl bio");
+    .populate("author", "username avatarUrl bio role");
 
   if (!post) {
     throw new ApiError(404, "Post not found");
