@@ -1,11 +1,8 @@
 import User from "../models/User.js";
-
+import Post from "../models/Post.js";
 import ApiError from "../utils/ApiError.js";
-
 import ApiResponse from "../utils/ApiResponse.js";
-
 import asyncHandler from "../utils/asyncHandler.js";
-
 import cloudinary from "../config/cloudinary.js";
 
 export const getUserProfile = asyncHandler(async (req, res) => {
