@@ -13,12 +13,18 @@ const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
 const sendAuthResponse = (user, statusCode, res, message) => {
   const token = signToken(user._id);
-  res.cookie(process.env.COOKIE_NAME || "token", token, cookieOptions);
+
+  res.cookie(
+    process.env.COOKIE_NAME || "token",
+    token,
+    cookieOptions
+  );
+
   return res.status(statusCode).json(
     new ApiResponse(
       statusCode,
@@ -31,27 +37,36 @@ const sendAuthResponse = (user, statusCode, res, message) => {
 export const register = asyncHandler(async (req, res) => {
   const { email, username, password } = req.body;
 
-  // Normalize username before checking and saving
+  const normalizedEmail = email?.trim().toLowerCase();
   const normalizedUsername = username?.trim().toLowerCase();
 
   const existing = await User.findOne({
     $or: [
-      { email },
+      { email: normalizedEmail },
       { username: normalizedUsername },
     ],
   });
 
   if (existing) {
-    throw new ApiError(409, "Email or username is already in use");
+    throw new ApiError(
+      409,
+      "Email or username is already in use"
+    );
   }
 
   const user = await User.create({
-    email,
+    email: normalizedEmail,
     username: normalizedUsername,
     password,
   });
 
-  sendAuthResponse(user, 201, res, "Registration successful");
+  res.status(201).json(
+    new ApiResponse(
+      201,
+      { user: user.toSafeObject() },
+      "Registration successful"
+    )
+  );
 });
 
 export const login = asyncHandler(async (req, res) => {
@@ -71,16 +86,37 @@ export const login = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Invalid credentials");
   }
 
-  sendAuthResponse(user, 200, res, "Login successful");
+  sendAuthResponse(
+    user,
+    200,
+    res,
+    "Login successful"
+  );
 });
 
 export const logout = asyncHandler(async (req, res) => {
-  res.clearCookie(process.env.COOKIE_NAME || "token", cookieOptions);
-  res.status(200).json(new ApiResponse(200, null, "Logged out successfully"));
+  res.clearCookie(
+    process.env.COOKIE_NAME || "token",
+    cookieOptions
+  );
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        null,
+        "Logged out successfully"
+      )
+    );
 });
 
 export const getMe = asyncHandler(async (req, res) => {
   res.status(200).json(
-    new ApiResponse(200, { user: req.user }, "Current user")
+    new ApiResponse(
+      200,
+      { user: req.user },
+      "Current user"
+    )
   );
 });

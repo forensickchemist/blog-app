@@ -34,7 +34,7 @@ const generateExcerpt = (sanitizedContent) => {
     return paragraphs
       .slice(0, 3)
       .join(" ")
-      .slice(0, 220)
+      .slice(0, 280)
       .trim();
   }
 
@@ -43,7 +43,7 @@ const generateExcerpt = (sanitizedContent) => {
     .replace(/&nbsp;/gi, " ")
     .replace(/\s+/g, " ")
     .trim()
-    .slice(0, 220);
+    .slice(0, 280);
 };
 
 const getSearchPostIds = async (search) => {
