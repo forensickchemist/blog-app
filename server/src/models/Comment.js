@@ -16,6 +16,19 @@ const commentSchema = new mongoose.Schema(
       index: true,
     },
 
+    parentComment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+      default: null,
+      index: true,
+    },
+
+    mentionedUser: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+
     content: {
       type: String,
       required: [true, "Comment content is required"],
@@ -30,6 +43,12 @@ const commentSchema = new mongoose.Schema(
 
 commentSchema.index({
   post: 1,
+  createdAt: 1,
+});
+
+commentSchema.index({
+  post: 1,
+  parentComment: 1,
   createdAt: 1,
 });
 

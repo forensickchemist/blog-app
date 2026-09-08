@@ -7,7 +7,11 @@ import {
   deleteComment,
 } from "../controllers/comment.js";
 
-import { protect, optionalAuth } from "../middlewares/auth.js";
+import {
+  protect,
+  optionalAuth,
+} from "../middlewares/auth.js";
+
 import validate from "../middlewares/validate.js";
 
 const router = Router();
@@ -18,12 +22,26 @@ const commentValidation = [
     .notEmpty()
     .withMessage("Comment content is required")
     .isLength({ max: 1000 })
-    .withMessage("Comment cannot exceed 1000 characters"),
+    .withMessage(
+      "Comment cannot exceed 1000 characters"
+    ),
+
+  body("parentComment")
+    .optional()
+    .isMongoId()
+    .withMessage("Invalid parent comment"),
+
+  body("mentionedUsername")
+    .optional()
+    .trim()
+    .isLength({ max: 50 })
+    .withMessage(
+      "Invalid mentioned username"
+    ),
 ];
 
 // PUBLIC / OPTIONAL AUTH
-// Guests can read comments on published posts.
-// Owners/admins can read comments on accessible drafts.
+
 router.get(
   "/posts/:postId/comments",
   optionalAuth,
@@ -31,7 +49,7 @@ router.get(
 );
 
 // AUTHENTICATED USERS
-// Users can comment on posts they are allowed to access.
+
 router.post(
   "/posts/:postId/comments",
   protect,
@@ -41,6 +59,7 @@ router.post(
 );
 
 // COMMENT OWNER OR ADMIN
+
 router.delete(
   "/comments/:commentId",
   protect,
