@@ -1,0 +1,1001 @@
+@import "./variables.css";
+
+
+/* ================================================================
+   RESET & BASE
+   ================================================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  line-height: var(--lh-normal);
+
+  transition:
+    color var(--transition-base),
+    background-color var(--transition-base);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+
+/* ================================================================
+   TYPOGRAPHY
+   ================================================================ */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0;
+
+  font-family: var(--font-heading);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-tight);
+
+  color: var(--color-text);
+}
+
+p {
+  margin-top: 0;
+}
+
+small {
+  font-size: var(--fs-sm);
+}
+
+strong {
+  font-weight: var(--fw-semibold);
+}
+
+
+/* ================================================================
+   LINKS
+   ================================================================ */
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-primary-dark);
+}
+
+
+/* ================================================================
+   ACCESSIBILITY
+   ================================================================ */
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+
+/* ================================================================
+   LAYOUT
+   ================================================================ */
+
+.app-container {
+  width: 100%;
+  max-width: var(--container-max);
+
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
+
+.app-container--fluid {
+  max-width: none;
+}
+
+.page-section {
+  padding-block: var(--space-8);
+}
+
+.page-section--sm {
+  padding-block: var(--space-5);
+}
+
+.page-section--lg {
+  padding-block: var(--space-10);
+}
+
+.page-section--xl {
+  padding-block: var(--space-12);
+}
+
+
+/* ================================================================
+   NAVIGATION
+   ================================================================ */
+
+.app-navbar {
+  width: 100%;
+  min-height: var(--navbar-height);
+
+  background-color: var(--color-surface);
+  border-bottom: var(--border-width) solid var(--color-border);
+
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base);
+}
+
+
+/* ---- Navbar container ---- */
+
+.app-navbar__container {
+  display: flex;
+  align-items: center;
+  min-height: var(--navbar-height);
+}
+
+
+/* ---- Navbar header ---- */
+/*
+ * On desktop this participates in the same horizontal row
+ * as the navigation.
+ *
+ * On collapsed screens this becomes the dedicated top row
+ * containing only the brand and hamburger.
+ */
+
+.app-navbar__header {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+
+/* ---- Brand ---- */
+
+.app-navbar .navbar-brand {
+  display: inline-flex;
+  align-items: center;
+
+  color: var(--color-text);
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+
+  white-space: nowrap;
+
+  transition: color var(--transition-fast);
+}
+
+.app-navbar .navbar-brand:hover {
+  color: var(--color-primary);
+}
+
+
+/* ---- Mobile toggle ---- */
+
+.app-navbar .navbar-toggler {
+  display: none;
+
+  align-items: center;
+  justify-content: center;
+
+  width: var(--button-height);
+  height: var(--button-height);
+
+  margin-left: var(--space-3);
+  padding: var(--space-2);
+
+  color: var(--color-text);
+
+  background-color: transparent;
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius-md);
+
+  font-size: var(--fs-xl);
+  line-height: 1;
+
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.app-navbar .navbar-toggler:hover {
+  color: var(--color-primary);
+  background-color: var(--color-surface-alt);
+  border-color: var(--color-border);
+}
+
+.app-navbar .navbar-toggler:focus-visible {
+  color: var(--color-primary);
+  background-color: var(--color-surface-alt);
+  border-color: var(--color-primary);
+}
+
+
+/* ================================================================
+   NAVIGATION LINKS
+   ================================================================ */
+
+.app-navbar .navbar-collapse {
+  display: flex;
+  align-items: center;
+
+  flex-grow: 1;
+}
+
+.app-navbar .navbar-nav {
+  display: flex;
+  align-items: center;
+}
+
+.app-navbar .nav-link {
+  display: inline-flex;
+  align-items: center;
+
+  padding: var(--space-2) var(--space-3);
+
+  color: var(--color-text-muted);
+  font-weight: var(--fw-medium);
+
+  border-radius: var(--radius-md);
+
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.app-navbar .nav-link:hover {
+  color: var(--color-primary);
+  background-color: var(--color-surface-alt);
+}
+
+.app-navbar .nav-link.active,
+.app-navbar .nav-link.router-link-active {
+  color: var(--color-primary);
+}
+
+
+/* ================================================================
+   NAVIGATION DROPDOWNS
+   ================================================================ */
+
+.app-navbar .dropdown-menu {
+  min-width: 12rem;
+
+  margin-top: var(--space-2);
+
+  padding: var(--space-2);
+
+  background-color: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  box-shadow: var(--shadow-md);
+}
+
+.app-navbar .dropdown-item {
+  padding: var(--space-2) var(--space-3);
+
+  color: var(--color-text);
+
+  border-radius: var(--radius-sm);
+
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.app-navbar .dropdown-item:hover,
+.app-navbar .dropdown-item:focus {
+  color: var(--color-primary);
+  background-color: var(--color-surface-alt);
+}
+
+.app-navbar .dropdown-divider {
+  border-color: var(--color-border);
+}
+
+
+/* ================================================================
+   BUTTONS
+   ================================================================ */
+
+.btn-app-primary {
+  background-color: var(--color-primary);
+  border: var(--border-width) solid var(--color-primary);
+  color: var(--color-text-inverse);
+
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.btn-app-primary:hover {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+  color: var(--color-text-inverse);
+
+  transform: translateY(-1px);
+}
+
+.btn-app-primary:active {
+  transform: translateY(0);
+}
+
+
+.btn-app-secondary {
+  background-color: var(--color-secondary);
+  border: var(--border-width) solid var(--color-secondary);
+  color: var(--color-text);
+
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.btn-app-secondary:hover {
+  background-color: var(--color-secondary-dark);
+  border-color: var(--color-secondary-dark);
+  color: var(--color-text);
+}
+
+
+.btn-app-outline {
+  background-color: transparent;
+  border: var(--border-width) solid var(--color-primary);
+  color: var(--color-primary);
+
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.btn-app-outline:hover {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+
+.btn-app-ghost {
+  background-color: transparent;
+  border: var(--border-width) solid transparent;
+  color: var(--color-text-muted);
+}
+
+.btn-app-ghost:hover {
+  background-color: var(--color-surface-alt);
+  color: var(--color-primary);
+}
+
+
+/* ================================================================
+   TEXT UTILITIES
+   ================================================================ */
+
+.text-app-primary {
+  color: var(--color-primary) !important;
+}
+
+.text-app-secondary {
+  color: var(--color-secondary-dark) !important;
+}
+
+.text-app-accent {
+  color: var(--color-accent) !important;
+}
+
+.text-app-muted {
+  color: var(--color-text-muted) !important;
+}
+
+.text-app-light {
+  color: var(--color-text-light) !important;
+}
+
+.text-app-inverse {
+  color: var(--color-text-inverse) !important;
+}
+
+
+/* ================================================================
+   BACKGROUND UTILITIES
+   ================================================================ */
+
+.bg-app {
+  background-color: var(--color-bg) !important;
+}
+
+.bg-app-surface {
+  background-color: var(--color-surface) !important;
+}
+
+.bg-app-surface-alt {
+  background-color: var(--color-surface-alt) !important;
+}
+
+.bg-app-primary {
+  background-color: var(--color-primary) !important;
+}
+
+.bg-app-secondary {
+  background-color: var(--color-secondary) !important;
+}
+
+
+/* ================================================================
+   CARDS
+   ================================================================ */
+
+.app-card {
+  background-color: var(--color-surface);
+
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-sm);
+
+  transition:
+    box-shadow var(--transition-base),
+    transform var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base);
+}
+
+.app-card--hoverable:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.app-card--interactive {
+  cursor: pointer;
+}
+
+.app-card--interactive:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary-light);
+}
+
+
+/* ================================================================
+   BADGES & TAGS
+   ================================================================ */
+
+.app-tag {
+  display: inline-flex;
+  align-items: center;
+
+  padding: var(--space-1) var(--space-3);
+
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+
+  color: var(--color-primary-dark);
+
+  background-color: color-mix(
+    in srgb,
+    var(--color-primary) 12%,
+    var(--color-surface)
+  );
+
+  border-radius: var(--radius-pill);
+
+  white-space: nowrap;
+}
+
+
+/* ================================================================
+   FORMS
+   ================================================================ */
+
+.form-control,
+.form-select {
+  border-radius: var(--radius-md);
+
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.form-control:focus,
+.form-select:focus {
+  color: var(--color-text);
+  background-color: var(--color-surface);
+
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0 0 0 0.2rem
+    color-mix(
+      in srgb,
+      var(--color-primary) 25%,
+      transparent
+    );
+}
+
+.form-control::placeholder {
+  color: var(--color-text-light);
+}
+
+
+/* ================================================================
+   AVATARS
+   ================================================================ */
+
+.app-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: var(--avatar-md);
+  height: var(--avatar-md);
+
+  flex-shrink: 0;
+
+  overflow: hidden;
+
+  color: var(--color-text-inverse);
+  background-color: var(--color-primary);
+
+  border-radius: 50%;
+
+  font-weight: var(--fw-semibold);
+}
+
+.app-avatar--sm {
+  width: var(--avatar-sm);
+  height: var(--avatar-sm);
+}
+
+.app-avatar--lg {
+  width: var(--avatar-lg);
+  height: var(--avatar-lg);
+}
+
+.app-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+/* ================================================================
+   BORDERS
+   ================================================================ */
+
+.border-app {
+  border-color: var(--color-border) !important;
+}
+
+.border-app-primary {
+  border-color: var(--color-primary) !important;
+}
+
+.border-app-light {
+  border-color: var(--color-border-light) !important;
+}
+
+.border-app-dark {
+  border-color: var(--color-border-dark) !important;
+}
+
+
+/* ================================================================
+   DIVIDERS
+   ================================================================ */
+
+.app-divider {
+  width: 100%;
+  height: var(--border-width);
+
+  margin-block: var(--space-5);
+
+  background-color: var(--color-border);
+}
+
+
+/* ================================================================
+   LOADING
+   ================================================================ */
+
+.app-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding-block: var(--space-8);
+}
+
+
+/* ================================================================
+   EMPTY STATE
+   ================================================================ */
+
+.empty-state {
+  padding: var(--space-10) var(--space-4);
+
+  color: var(--color-text-muted);
+
+  text-align: center;
+}
+
+
+/* ================================================================
+   ALERTS
+   ================================================================ */
+
+.app-alert {
+  padding: var(--space-3) var(--space-4);
+
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background-color: var(--color-surface);
+}
+
+.app-alert--success {
+  color: var(--color-success);
+  background-color: color-mix(
+    in srgb,
+    var(--color-success) 10%,
+    var(--color-surface)
+  );
+}
+
+.app-alert--danger {
+  color: var(--color-danger);
+  background-color: color-mix(
+    in srgb,
+    var(--color-danger) 10%,
+    var(--color-surface)
+  );
+}
+
+.app-alert--warning {
+  color: var(--color-warning);
+  background-color: color-mix(
+    in srgb,
+    var(--color-warning) 10%,
+    var(--color-surface)
+  );
+}
+
+.app-alert--info {
+  color: var(--color-info);
+  background-color: color-mix(
+    in srgb,
+    var(--color-info) 10%,
+    var(--color-surface)
+  );
+}
+
+
+/* ================================================================
+   TABLES
+   ================================================================ */
+
+.app-table {
+  width: 100%;
+
+  color: var(--color-text);
+
+  background-color: var(--color-surface);
+}
+
+.app-table th {
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+}
+
+.app-table th,
+.app-table td {
+  padding: var(--space-3);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+
+/* ================================================================
+   OVERLAYS
+   ================================================================ */
+
+.app-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: var(--z-modal-backdrop);
+
+  background-color: var(--color-overlay);
+}
+
+
+/* ================================================================
+   RICH TEXT
+   ================================================================ */
+
+.rich-text {
+  font-size: var(--fs-lg);
+  line-height: var(--lh-relaxed);
+}
+
+.rich-text p {
+  margin-bottom: var(--space-4);
+}
+
+.rich-text img {
+  margin-block: var(--space-4);
+
+  border-radius: var(--radius-md);
+}
+
+.rich-text h2,
+.rich-text h3,
+.rich-text h4 {
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-3);
+}
+
+
+/* ================================================================
+   VISUALLY HIDDEN
+   ================================================================ */
+
+.visually-hidden {
+  position: absolute !important;
+
+  width: 1px !important;
+  height: 1px !important;
+
+  padding: 0 !important;
+  margin: -1px !important;
+
+  overflow: hidden !important;
+
+  clip: rect(0, 0, 0, 0) !important;
+
+  white-space: nowrap !important;
+
+  border: 0 !important;
+}
+
+
+/* ================================================================
+   TRANSITIONS
+   ================================================================ */
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity var(--transition-base);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+
+/* ================================================================
+   COLLAPSED NAVIGATION
+   ================================================================ */
+
+@media (max-width: 991.98px) {
+
+  /*
+   * The entire navbar becomes a vertical layout.
+   *
+   * This is the important fix:
+   *
+   *   Brand + hamburger
+   *          ↓
+   *   Navigation
+   *
+   * The navigation can no longer appear beside the brand.
+   */
+
+  .app-navbar__container {
+    flex-direction: column;
+    align-items: stretch;
+
+    min-height: var(--navbar-height-sm);
+  }
+
+
+  /* --------------------------------------------------------------
+     Header row
+     -------------------------------------------------------------- */
+
+  .app-navbar__header {
+    width: 100%;
+    min-height: var(--navbar-height-sm);
+
+    justify-content: space-between;
+  }
+
+  .app-navbar .navbar-toggler {
+    display: inline-flex;
+  }
+
+
+  /* --------------------------------------------------------------
+     Collapsed navigation
+     -------------------------------------------------------------- */
+
+  .app-navbar .navbar-collapse {
+    display: none;
+
+    width: 100%;
+
+    flex-grow: 0;
+
+    padding-block: var(--space-3);
+
+    border-top: var(--border-width) solid var(--color-border);
+  }
+
+  .app-navbar .navbar-collapse.is-open {
+    display: block;
+  }
+
+
+  /* --------------------------------------------------------------
+     Navigation items
+     -------------------------------------------------------------- */
+
+  .app-navbar .navbar-nav {
+    width: 100%;
+
+    flex-direction: column;
+    align-items: flex-start !important;
+
+    gap: var(--space-1);
+
+    padding-block: var(--space-1);
+  }
+
+  .app-navbar .nav-item {
+    width: auto;
+  }
+
+  .app-navbar .nav-link {
+    width: auto;
+
+    padding: var(--space-2) var(--space-3);
+  }
+
+
+  /* --------------------------------------------------------------
+     Sign Up button
+     -------------------------------------------------------------- */
+
+  .app-navbar .btn {
+    width: auto;
+
+    margin: 0;
+
+    white-space: nowrap;
+  }
+
+
+  /* --------------------------------------------------------------
+     Dropdown
+     -------------------------------------------------------------- */
+
+  .app-navbar .dropdown-menu {
+    position: static !important;
+
+    width: auto;
+    min-width: 12rem;
+
+    margin-top: var(--space-2);
+
+    transform: none !important;
+  }
+}
+
+
+/* ================================================================
+   VERY SMALL SCREENS
+   ================================================================ */
+
+@media (max-width: 575.98px) {
+
+  .app-navbar .navbar-nav {
+    align-items: stretch !important;
+  }
+
+  .app-navbar .nav-item {
+    width: 100%;
+  }
+
+  .app-navbar .nav-link {
+    width: 100%;
+  }
+
+  /*
+   * Only on genuinely small screens do we allow the CTA
+   * to expand. This makes it easier to tap without making
+   * tablet layouts look oversized.
+   */
+
+  .app-navbar .btn {
+    width: 100%;
+    margin-top: var(--space-1);
+  }
+
+  .app-navbar .dropdown-menu {
+    width: 100%;
+  }
+}
+
+
+/* ================================================================
+   DESKTOP NAVIGATION
+   ================================================================ */
+
+@media (min-width: 992px) {
+
+  .app-navbar__container {
+    flex-direction: row;
+  }
+
+  .app-navbar__header {
+    width: auto;
+  }
+
+  .app-navbar .navbar-collapse {
+    display: flex !important;
+
+    width: auto;
+
+    flex-basis: auto;
+    flex-grow: 1;
+
+    padding: 0;
+
+    border-top: 0;
+  }
+}
+
+
+/* ================================================================
+   RESPONSIVE CONTAINER
+   ================================================================ */
+
+@media (max-width: 575.98px) {
+  .app-container {
+    padding-inline: var(--space-3);
+  }
+}
+
+@media (min-width: 1200px) {
+  .app-container {
+    padding-inline: var(--space-4);
+  }
+}

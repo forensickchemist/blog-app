@@ -1,0 +1,468 @@
+@import "./variables.css";
+
+
+/* =========================================================
+   GLOBAL RESET
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+
+  background: var(--color-bg);
+  color: var(--color-text);
+
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-normal);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  transition:
+    background-color var(--transition-normal),
+    color var(--transition-normal);
+}
+
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+textarea {
+  resize: vertical;
+}
+
+
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0;
+
+  color: var(--color-text);
+
+  font-family: var(--font-heading);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-tight);
+}
+
+h1 {
+  font-size: var(--fs-4xl);
+}
+
+h2 {
+  font-size: var(--fs-3xl);
+}
+
+h3 {
+  font-size: var(--fs-2xl);
+}
+
+h4 {
+  font-size: var(--fs-xl);
+}
+
+h5 {
+  font-size: var(--fs-lg);
+}
+
+h6 {
+  font-size: var(--fs-md);
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: var(--space-4);
+}
+
+small {
+  font-size: var(--fs-sm);
+}
+
+strong {
+  font-weight: var(--fw-semibold);
+}
+
+code,
+pre {
+  font-family: var(--font-mono);
+}
+
+
+/* =========================================================
+   LINKS
+   ========================================================= */
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition:
+    color var(--transition-fast),
+    opacity var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-primary-dark);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--color-primary-lighter);
+  color: var(--color-primary-dark);
+}
+
+mark {
+  padding: 0.1em 0.2em;
+  border-radius: var(--radius-sm);
+
+  background: var(--color-highlight);
+  color: inherit;
+}
+
+
+/* =========================================================
+   PAGE LAYOUT
+   ========================================================= */
+
+.app-container {
+  width: min(
+    100%,
+    var(--container-max)
+  );
+
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
+
+.page-section {
+  padding-block: var(--space-8);
+}
+
+.page-section--compact {
+  padding-block: var(--space-6);
+}
+
+.page-section--spacious {
+  padding-block: var(--space-12);
+}
+
+
+/* =========================================================
+   TEXT UTILITIES
+   Small set of application-specific utilities.
+   ========================================================= */
+
+.text-app-primary {
+  color: var(--color-primary) !important;
+}
+
+.text-app-secondary {
+  color: var(--color-secondary-dark) !important;
+}
+
+.text-app-accent {
+  color: var(--color-accent) !important;
+}
+
+.text-app-muted {
+  color: var(--color-text-muted) !important;
+}
+
+.text-app-light {
+  color: var(--color-text-light) !important;
+}
+
+.text-app-inverse {
+  color: var(--color-text-inverse) !important;
+}
+
+
+/* =========================================================
+   BACKGROUND UTILITIES
+   ========================================================= */
+
+.bg-app {
+  background-color: var(--color-bg) !important;
+}
+
+.bg-app-surface {
+  background-color: var(--color-surface) !important;
+}
+
+.bg-app-surface-alt {
+  background-color: var(--color-surface-alt) !important;
+}
+
+.bg-app-primary {
+  background-color: var(--color-primary) !important;
+}
+
+.bg-app-primary-light {
+  background-color: var(--color-primary-lighter) !important;
+}
+
+
+/* =========================================================
+   BORDER UTILITIES
+   ========================================================= */
+
+.border-app {
+  border-color: var(--color-border) !important;
+}
+
+.border-app-light {
+  border-color: var(--color-border-light) !important;
+}
+
+.border-app-dark {
+  border-color: var(--color-border-dark) !important;
+}
+
+
+/* =========================================================
+   DIVIDERS
+   ========================================================= */
+
+.app-divider {
+  width: 100%;
+  height: var(--border-width);
+  margin-block: var(--space-4);
+
+  background: var(--color-border);
+}
+
+
+/* =========================================================
+   VISUALLY HIDDEN
+   Accessibility helper for content that should remain
+   available to assistive technologies.
+   ========================================================= */
+
+.visually-hidden {
+  position: absolute !important;
+
+  width: 1px !important;
+  height: 1px !important;
+
+  padding: 0 !important;
+  margin: -1px !important;
+
+  overflow: hidden !important;
+
+  white-space: nowrap !important;
+
+  border: 0 !important;
+  clip: rect(0, 0, 0, 0) !important;
+}
+
+
+/* =========================================================
+   RICH TEXT
+   Used for rendered post content.
+   ========================================================= */
+
+.rich-text {
+  color: var(--color-text);
+  line-height: var(--lh-relaxed);
+}
+
+.rich-text > *:first-child {
+  margin-top: 0;
+}
+
+.rich-text > *:last-child {
+  margin-bottom: 0;
+}
+
+.rich-text h1,
+.rich-text h2,
+.rich-text h3,
+.rich-text h4,
+.rich-text h5,
+.rich-text h6 {
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-3);
+}
+
+.rich-text p {
+  margin-bottom: var(--space-4);
+}
+
+.rich-text ul,
+.rich-text ol {
+  margin-top: 0;
+  margin-bottom: var(--space-4);
+  padding-left: var(--space-6);
+}
+
+.rich-text li + li {
+  margin-top: var(--space-2);
+}
+
+.rich-text blockquote {
+  margin: var(--space-5) 0;
+  padding: var(--space-3) var(--space-4);
+
+  border-left: 3px solid var(--color-primary);
+
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.rich-text img {
+  margin-block: var(--space-5);
+  border-radius: var(--radius-md);
+}
+
+.rich-text a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.rich-text code {
+  padding: 0.15em 0.35em;
+  border-radius: var(--radius-sm);
+
+  background: var(--color-surface-alt);
+
+  font-size: 0.9em;
+}
+
+.rich-text pre {
+  margin-block: var(--space-5);
+  padding: var(--space-4);
+
+  overflow-x: auto;
+
+  border-radius: var(--radius-md);
+  background: var(--color-primary-dark);
+  color: var(--color-text-inverse);
+
+  line-height: var(--lh-normal);
+}
+
+.rich-text pre code {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+}
+
+
+/* =========================================================
+   ROUTER / PAGE TRANSITIONS
+   ========================================================= */
+
+.fade-enter-active,
+.fade-leave-active {
+  transition:
+    opacity var(--transition-normal),
+    transform var(--transition-normal);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+
+/* =========================================================
+   RESPONSIVE LAYOUT
+   ========================================================= */
+
+@media (min-width: 576px) {
+  .app-container {
+    padding-inline: var(--space-5);
+  }
+}
+
+@media (min-width: 768px) {
+  .app-container {
+    padding-inline: var(--space-6);
+  }
+}
+
+@media (min-width: 1200px) {
+  .app-container {
+    padding-inline: 0;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   Respect users who prefer less animation.
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

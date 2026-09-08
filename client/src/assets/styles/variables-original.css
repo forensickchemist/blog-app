@@ -1,0 +1,343 @@
+:root {
+  /* ================================================================
+     DESIGN SYSTEM — Theme & Design Tokens
+     Generic tokens intended to be reusable across applications.
+     ================================================================ */
+
+  /* ---- Brand / Semantic Colors ---- */
+  --color-primary: #173f35;
+  --color-primary-dark: #0d2b24;
+  --color-primary-light: #3f7567;
+  --color-primary-lighter: #e2f0eb;
+
+  --color-secondary: #ffcf4a;
+  --color-secondary-dark: #dcae25;
+  --color-secondary-light: #ffe58a;
+
+  --color-accent: #f06a6a;
+  --color-accent-dark: #d94d52;
+  --color-accent-light: #ff9a98;
+
+  --color-purple: #8b7cf6;
+  --color-purple-light: #dcd7ff;
+
+  /* ---- Feedback ---- */
+  --color-success: #3caf72;
+  --color-success-dark: #2d915d;
+  --color-success-light: #ccefdc;
+
+  --color-danger: #e05252;
+  --color-danger-dark: #c73d3d;
+  --color-danger-light: #f8d1d1;
+
+  --color-warning: #e4a72c;
+  --color-warning-dark: #bd8618;
+  --color-warning-light: #fff0c2;
+
+  --color-info: #5288d8;
+  --color-info-dark: #3c6fba;
+  --color-info-light: #d7e5fa;
+
+  /* ---- Highlight / Emphasis ---- */
+  --color-highlight: #ffe45c;
+  --color-highlight-bg: #fff3ad;
+
+  /* ---- Backgrounds / Surfaces ---- */
+  --color-bg: #f7f7f2;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f0f2ec;
+  --color-surface-hover: #f5f6f2;
+  --color-surface-active: #ebeee9;
+
+  /* ---- Borders / Dividers ---- */
+  --color-border: #dedfd8;
+  --color-border-light: #e9eae5;
+  --color-border-dark: #c7cac3;
+
+  /* ---- Text ---- */
+  --color-text: #17211d;
+  --color-text-muted: #69716b;
+  --color-text-light: #929993;
+  --color-text-inverse: #ffffff;
+
+  /* ---- Overlay ---- */
+  --color-overlay: rgba(23, 33, 29, 0.5);
+
+  /* ================================================================
+     TYPOGRAPHY
+     ================================================================ */
+
+  --font-heading: "DM Sans", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
+
+  --fs-2xs: 0.6875rem;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.375rem;
+  --fs-2xl: 1.75rem;
+  --fs-3xl: 2.25rem;
+  --fs-4xl: 3rem;
+  --fs-5xl: 3.75rem;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+
+  --lh-none: 1;
+  --lh-tight: 1.15;
+  --lh-normal: 1.5;
+  --lh-relaxed: 1.75;
+
+  /* ================================================================
+     SPACING
+     ================================================================ */
+
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+  --space-10: 4rem;
+  --space-12: 5rem;
+  --space-16: 6rem;
+  --space-20: 8rem;
+
+  /* ================================================================
+     SIZING
+     ================================================================ */
+
+  --size-xs: 20rem;
+  --size-sm: 24rem;
+  --size-md: 32rem;
+  --size-lg: 48rem;
+  --size-xl: 64rem;
+  --size-2xl: 80rem;
+
+  /* ================================================================
+     LAYOUT
+     ================================================================ */
+
+  --container-sm: 540px;
+  --container-md: 720px;
+  --container-lg: 960px;
+  --container-xl: 1140px;
+  --container-2xl: 1320px;
+
+  --container-max: var(--container-xl);
+
+  --navbar-height: 64px;
+  --navbar-height-sm: 56px;
+
+  --sidebar-width: 260px;
+  --sidebar-width-lg: 300px;
+
+  /* ================================================================
+     BORDERS / RADII
+     ================================================================ */
+
+  --border-width: 1px;
+  --border-width-thick: 2px;
+
+  --radius-none: 0;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-pill: 999px;
+
+  /* ================================================================
+     SHADOWS
+     ================================================================ */
+
+  --shadow-none: none;
+  --shadow-xs: 0 1px 2px rgba(23, 63, 53, 0.06);
+  --shadow-sm: 0 1px 3px rgba(23, 63, 53, 0.08);
+  --shadow-md: 0 6px 18px rgba(23, 63, 53, 0.10);
+  --shadow-lg: 0 16px 40px rgba(23, 63, 53, 0.14);
+  --shadow-xl: 0 24px 60px rgba(23, 63, 53, 0.18);
+
+  /* ================================================================
+     TRANSITIONS
+     ================================================================ */
+
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
+
+  /* ================================================================
+     Z-INDEX
+     ================================================================ */
+
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+
+  /* ================================================================
+     FORMS
+     ================================================================ */
+
+  --input-height-sm: 32px;
+  --input-height: 40px;
+  --input-height-lg: 48px;
+
+  --focus-ring-width: 3px;
+  --focus-ring-color: color-mix(
+    in srgb,
+    var(--color-primary) 25%,
+    transparent
+  );
+
+  /* ================================================================
+     COMPONENT TOKENS
+     ================================================================ */
+
+  --button-height-sm: 32px;
+  --button-height: 40px;
+  --button-height-lg: 48px;
+
+  --avatar-size-sm: 32px;
+  --avatar-size: 40px;
+  --avatar-size-lg: 48px;
+  --avatar-size-xl: 64px;
+
+  --icon-size-sm: 16px;
+  --icon-size: 20px;
+  --icon-size-lg: 24px;
+
+  /* ================================================================
+     BOOTSTRAP
+     ================================================================ */
+
+  --bs-primary: var(--color-primary);
+  --bs-primary-rgb: 23, 63, 53;
+
+  --bs-secondary: var(--color-secondary);
+  --bs-secondary-rgb: 255, 207, 74;
+
+  --bs-success: var(--color-success);
+  --bs-success-rgb: 60, 175, 114;
+
+  --bs-danger: var(--color-danger);
+  --bs-danger-rgb: 224, 82, 82;
+
+  --bs-warning: var(--color-warning);
+  --bs-warning-rgb: 228, 167, 44;
+
+  --bs-info: var(--color-info);
+  --bs-info-rgb: 82, 136, 216;
+
+  --bs-body-font-family: var(--font-body);
+  --bs-body-color: var(--color-text);
+  --bs-body-bg: var(--color-bg);
+
+  --bs-border-color: var(--color-border);
+
+  --bs-border-radius: var(--radius-md);
+  --bs-border-radius-lg: var(--radius-lg);
+
+  --bs-link-color: var(--color-primary);
+  --bs-link-hover-color: var(--color-accent);
+}
+
+
+/* ================================================================
+   DARK MODE
+   ================================================================ */
+
+[data-theme="dark"] {
+  --color-bg: #101615;
+  --color-surface: #18201e;
+  --color-surface-alt: #202a27;
+  --color-surface-hover: #222d29;
+  --color-surface-active: #293631;
+
+  --color-border: #303a36;
+  --color-border-light: #28312e;
+  --color-border-dark: #46514c;
+
+  --color-text: #f1f3ed;
+  --color-text-muted: #a7afa9;
+  --color-text-light: #7f8983;
+  --color-text-inverse: #101615;
+
+  --color-overlay: rgba(0, 0, 0, 0.65);
+
+  --color-primary: #7fc9b5;
+  --color-primary-dark: #5eaa96;
+  --color-primary-light: #a4dfcf;
+  --color-primary-lighter: #203b34;
+
+  --color-secondary: #ffdc61;
+  --color-secondary-dark: #e7bd3d;
+  --color-secondary-light: #ffe998;
+
+  --color-accent: #ff8585;
+  --color-accent-dark: #e9666c;
+  --color-accent-light: #ffabab;
+
+  --color-purple: #a79cff;
+  --color-purple-light: #3a355f;
+
+  --color-success: #63c78d;
+  --color-success-dark: #49ae75;
+  --color-success-light: #244d37;
+
+  --color-danger: #f07878;
+  --color-danger-dark: #dc5d5d;
+  --color-danger-light: #542d2d;
+
+  --color-warning: #f0bd4e;
+  --color-warning-dark: #d9a638;
+  --color-warning-light: #50421e;
+
+  --color-info: #76a5e8;
+  --color-info-dark: #5c8ed0;
+  --color-info-light: #293c5a;
+
+  --color-highlight: #ffe45c;
+  --color-highlight-bg: #4a421d;
+
+  --bs-primary: var(--color-primary);
+  --bs-primary-rgb: 127, 201, 181;
+
+  --bs-secondary: var(--color-secondary);
+  --bs-secondary-rgb: 255, 220, 97;
+
+  --bs-body-bg: var(--color-bg);
+  --bs-body-color: var(--color-text);
+  --bs-border-color: var(--color-border);
+
+  --bs-link-color: var(--color-primary);
+  --bs-link-hover-color: var(--color-accent);
+}
+
+
+/* ================================================================
+   NOTEBOOK / CONTENT DEFAULTS
+   ================================================================ */
+
+::selection {
+  background: var(--color-highlight);
+  color: var(--color-text);
+}
+
+mark {
+  background: var(--color-highlight-bg);
+  color: var(--color-text);
+  padding: 0 0.2em;
+  border-radius: var(--radius-sm);
+}
+
