@@ -250,17 +250,3 @@ export const deleteUser = asyncHandler(async (req, res) => {
       )
     );
 });
-
-export const updateBio = asyncHandler(async (req, res) => {
-  const user = await updateUserBio(req.user._id, req.body.bio);
-
-  res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        { user },
-        "Bio updated"
-      )
-    );
-});
