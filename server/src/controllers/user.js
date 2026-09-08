@@ -4,6 +4,7 @@ import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import cloudinary from "../config/cloudinary.js";
+import { updateUserBio } from "../services/user.js";
 
 export const getUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findOne({ username: req.params.username });
@@ -24,23 +25,9 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 });
 
 export const updateProfile = asyncHandler(async (req, res) => {
-  const allowedFields = ["username", "bio"];
-
-  const updates = {};
-
-  allowedFields.forEach((field) => {
-    if (req.body[field] !== undefined) {
-      updates[field] = req.body[field];
-    }
-  });
-
-  const user = await User.findByIdAndUpdate(
+  const user = await updateUserBio(
     req.user._id,
-    updates,
-    {
-      new: true,
-      runValidators: true,
-    }
+    req.body.bio
   );
 
   res
@@ -48,8 +35,8 @@ export const updateProfile = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { user },
-        "Profile updated"
+        { user: user.toSafeObject() },
+        "Bio updated"
       )
     );
 });
@@ -260,6 +247,20 @@ export const deleteUser = asyncHandler(async (req, res) => {
         200,
         null,
         "User and all associated content deleted"
+      )
+    );
+});
+
+export const updateBio = asyncHandler(async (req, res) => {
+  const user = await updateUserBio(req.user._id, req.body.bio);
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { user },
+        "Bio updated"
       )
     );
 });

@@ -553,24 +553,70 @@ export const deletePost = asyncHandler(async (req, res) => {
 // GET /api/posts/user/:username
 // Public — published posts only
 export const getPostsByUser = asyncHandler(async (req, res) => {
-  const posts = await Post.find({
-    status: "published",
-  })
-    .populate({
-      path: "author",
-      select: "username avatarUrl role",
-      match: {
-        username: req.params.username,
-      },
-    })
-    .sort({ createdAt: -1 });
+  const page = Math.max(
+    parseInt(req.query.page, 10) || 1,
+    1
+  );
 
-  const filtered = posts.filter((post) => post.author);
+  const limit = Math.min(
+    parseInt(req.query.limit, 10) || 9,
+    50
+  );
+
+  const skip = (page - 1) * limit;
+
+  const author = await User.findOne({
+    username: req.params.username,
+  }).select("_id");
+
+  if (!author) {
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          posts: [],
+          pagination: {
+            total: 0,
+            page,
+            limit,
+            totalPages: 0,
+          },
+        },
+        "Posts fetched"
+      )
+    );
+  }
+
+  const filter = {
+    status: "published",
+    author: author._id,
+  };
+
+  const [posts, total] = await Promise.all([
+    Post.find(filter)
+      .populate({
+        path: "author",
+        select: "username avatarUrl role",
+      })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+
+    Post.countDocuments(filter),
+  ]);
 
   res.status(200).json(
     new ApiResponse(
       200,
-      { posts: filtered },
+      {
+        posts,
+        pagination: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
       "Posts fetched"
     )
   );

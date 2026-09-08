@@ -35,10 +35,15 @@ router.put(
   "/me",
   protect,
   [
-    body("username")
-      .optional()
+    body("bio")
+      .exists()
+      .withMessage("Bio is required")
+      .bail()
+      .isString()
+      .withMessage("Bio must be a string")
       .trim()
-      .isLength({ min: 3, max: 30 }),
+      .isLength({ max: 280 })
+      .withMessage("Bio cannot exceed 280 characters"),
   ],
   validate,
   updateProfile
