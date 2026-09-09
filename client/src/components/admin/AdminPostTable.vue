@@ -1,23 +1,24 @@
 <template>
   <EmptyState
-    v-if="!users.length"
-    icon="bi-people"
-    title="No users found"
-    description="There are currently no users to display."
+    v-if="!posts.length"
+    icon="bi-journal"
+    title="No posts found"
+    description="There are currently no posts to display."
   />
 
   <div
     v-else
-    class="admin-user-table app-card"
+    class="admin-post-table"
   >
-    <div class="admin-user-table__responsive">
-      <table class="admin-user-table__table">
-        <thead class="admin-user-table__head">
+    <div class="admin-post-table__responsive">
+      <table class="admin-post-table__table">
+        <thead class="admin-post-table__head">
           <tr>
-            <th>Username</th>
-            <th>Role</th>
-            <th>Joined</th>
-            <th class="admin-user-table__actions-heading">
+            <th>Title</th>
+            <th>Author</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th class="admin-post-table__actions-heading">
               Actions
             </th>
           </tr>
@@ -25,57 +26,43 @@
 
         <tbody>
           <tr
-            v-for="user in users"
-            :key="user._id"
-            class="admin-user-table__row"
+            v-for="post in posts"
+            :key="post._id"
+            class="admin-post-table__row"
           >
-            <td class="admin-user-table__username">
-              {{ user.username }}
+            <td class="admin-post-table__title">
+              {{ post.title }}
+            </td>
+
+            <td class="admin-post-table__author">
+              {{ post.author?.username || "Unknown" }}
             </td>
 
             <td>
               <span
-                class="admin-user-table__role"
+                class="admin-post-table__status"
                 :class="
-                  user.role === 'admin'
-                    ? 'admin-user-table__role--admin'
-                    : 'admin-user-table__role--user'
+                  post.status === 'published'
+                    ? 'admin-post-table__status--published'
+                    : 'admin-post-table__status--draft'
                 "
               >
-                {{ user.role }}
+                {{ post.status }}
               </span>
             </td>
 
-            <td class="admin-user-table__date">
-              {{ formatDateTime(user.createdAt) }}
+            <td class="admin-post-table__date">
+              {{ formatDate(post.createdAt) }}
             </td>
 
-            <td class="admin-user-table__actions">
-              <div class="admin-user-actions">
-                <BaseButton
-                  size="sm"
-                  :variant="
-                    user.role === 'admin'
-                      ? 'secondary'
-                      : 'primary'
-                  "
-                  @click="emit('change-role', user)"
-                >
-                  {{
-                    user.role === "admin"
-                      ? "Remove Admin"
-                      : "Make Admin"
-                  }}
-                </BaseButton>
-
-                <BaseButton
-                  size="sm"
-                  variant="danger"
-                  @click="emit('delete', user)"
-                >
-                  Delete
-                </BaseButton>
-              </div>
+            <td class="admin-post-table__actions">
+              <BaseButton
+                variant="danger"
+                size="sm"
+                @click="emit('delete', post)"
+              >
+                Delete
+              </BaseButton>
             </td>
           </tr>
         </tbody>
@@ -89,41 +76,40 @@ import EmptyState from "../common/EmptyState.vue";
 import BaseButton from "../common/BaseButton.vue";
 
 defineProps({
-  users: {
+  posts: {
     type: Array,
     default: () => [],
   },
 });
 
-const emit = defineEmits([
-  "change-role",
-  "delete",
-]);
+const emit = defineEmits(["delete"]);
 
-const formatDateTime = (date) => {
-  return new Date(date).toLocaleString(undefined, {
+const formatDate = (date) => {
+  return new Date(date).toLocaleDateString(undefined, {
     year: "numeric",
     month: "short",
     day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
   });
 };
 </script>
 
 <style scoped>
-.admin-user-table {
+.admin-post-table {
   width: 100%;
   overflow: hidden;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
-.admin-user-table__responsive {
+.admin-post-table__responsive {
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-.admin-user-table__table {
+.admin-post-table__table {
   width: 100%;
   min-width: 700px;
   margin: 0;
@@ -132,11 +118,11 @@ const formatDateTime = (date) => {
   font-size: var(--fs-sm);
 }
 
-.admin-user-table__head {
+.admin-post-table__head {
   background: var(--color-surface-alt);
 }
 
-.admin-user-table__head th {
+.admin-post-table__head th {
   padding: var(--space-3) var(--space-4);
   color: var(--color-text-muted);
   font-size: var(--fs-xs);
@@ -149,35 +135,39 @@ const formatDateTime = (date) => {
   border-bottom: var(--border-width) solid var(--color-border);
 }
 
-.admin-user-table__row {
+.admin-post-table__row {
   transition: background-color var(--transition-fast);
 }
 
-.admin-user-table__row:not(:last-child) td {
+.admin-post-table__row:not(:last-child) td {
   border-bottom: var(--border-width) solid var(--color-border);
 }
 
-.admin-user-table__row:hover {
+.admin-post-table__row:hover {
   background: var(--color-surface-alt);
 }
 
-.admin-user-table__table td {
+.admin-post-table__table td {
   padding: var(--space-4);
   vertical-align: middle;
 }
 
-.admin-user-table__username {
-  min-width: 180px;
+.admin-post-table__title {
+  min-width: 220px;
   font-weight: var(--fw-medium);
 }
 
-.admin-user-table__date {
+.admin-post-table__author {
+  color: var(--color-text-muted);
+}
+
+.admin-post-table__date {
   color: var(--color-text-muted);
   font-size: var(--fs-sm);
   white-space: nowrap;
 }
 
-.admin-user-table__role {
+.admin-post-table__status {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -191,43 +181,45 @@ const formatDateTime = (date) => {
   white-space: nowrap;
 }
 
-.admin-user-table__role--admin {
-  color: var(--color-primary);
-  background: var(--color-primary-lighter);
+.admin-post-table__status--published {
+  color: var(--color-success-dark);
+  background: var(--color-success-light);
 }
 
-.admin-user-table__role--user {
+.admin-post-table__status--draft {
   color: var(--color-text-muted);
   background: var(--color-surface-alt);
 }
 
-.admin-user-table__actions-heading,
-.admin-user-table__actions {
-  text-align: left;
+.admin-post-table__actions-heading,
+.admin-post-table__actions {
+  text-align: right;
 }
 
-.admin-user-table__actions {
+.admin-post-table__actions {
   white-space: nowrap;
 }
 
-.admin-user-actions {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-2);
+[data-theme="dark"] .admin-post-table__head {
+  background: var(--color-surface-alt);
+}
+
+[data-theme="dark"] .admin-post-table__status--published {
+  color: var(--color-success);
+  background: var(--color-success-dark);
 }
 
 @media (max-width: 767.98px) {
-  .admin-user-table {
+  .admin-post-table {
     border-radius: var(--radius-md);
   }
 
-  .admin-user-table__table {
+  .admin-post-table__table {
     min-width: 650px;
   }
 
-  .admin-user-table__table td,
-  .admin-user-table__head th {
+  .admin-post-table__table td,
+  .admin-post-table__head th {
     padding: var(--space-3);
   }
 }

@@ -10,9 +10,9 @@
     v-else
     class="admin-user-table app-card"
   >
-    <div class="app-table-responsive">
-      <table class="app-table admin-user-table__table">
-        <thead>
+    <div class="admin-user-table__responsive">
+      <table class="admin-user-table__table">
+        <thead class="admin-user-table__head">
           <tr>
             <th>Username</th>
             <th>Role</th>
@@ -112,21 +112,58 @@ const formatDateTime = (date) => {
 </script>
 
 <style scoped>
-/*
- * Table/card/responsive styling is provided by global.css.
- * Design values come from variables.css through the global system.
- */
+.admin-user-table {
+  width: 100%;
+  overflow: hidden;
+}
+
+.admin-user-table__responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
 .admin-user-table__table {
+  width: 100%;
   min-width: 700px;
+  margin: 0;
+  border-collapse: collapse;
+  color: var(--color-text-primary);
+  font-size: var(--fs-sm);
+}
+
+.admin-user-table__head {
+  background: var(--color-surface-alt);
+}
+
+.admin-user-table__head th {
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-normal);
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  border-bottom: var(--border-width) solid var(--color-border);
 }
 
 .admin-user-table__row {
   transition: background-color var(--transition-fast);
 }
 
+.admin-user-table__row:not(:last-child) td {
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
 .admin-user-table__row:hover {
   background: var(--color-surface-alt);
+}
+
+.admin-user-table__table td {
+  padding: var(--space-4);
+  vertical-align: middle;
 }
 
 .admin-user-table__username {
@@ -181,8 +218,17 @@ const formatDateTime = (date) => {
 }
 
 @media (max-width: 767.98px) {
+  .admin-user-table {
+    border-radius: var(--radius-md);
+  }
+
   .admin-user-table__table {
     min-width: 650px;
+  }
+
+  .admin-user-table__table td,
+  .admin-user-table__head th {
+    padding: var(--space-3);
   }
 }
 </style>
