@@ -24,7 +24,7 @@ const postSchema = new mongoose.Schema(
     excerpt: {
       type: String,
       trim: true,
-      maxlength: [220, "Excerpt cannot exceed 220 characters"],
+      maxlength: [280, "Excerpt cannot exceed 220 characters"],
       default: "",
     },
 

@@ -11,7 +11,11 @@ Express + MongoDB (Mongoose) REST API for the BlogApp MEVN project. Deployed to 
 - **Cloudinary** + **Multer** — image upload/hosting (via a small custom
   Multer storage engine in `config/cloudinary.js` — see note below)
 - **express-validator** — request validation
+- **isomorphic-dompurify** — sanitizes rich-text post content before it's saved
 - **helmet / cors / express-rate-limit** — baseline security
+- A small custom **CSRF middleware** (`middlewares/csrf.js`) that checks
+  the request `Origin` header against `CLIENT_URL` on every non-safe
+  request
 
 ## Project structure
 
@@ -19,11 +23,11 @@ Express + MongoDB (Mongoose) REST API for the BlogApp MEVN project. Deployed to 
 server/
 ├─ src/
 │  ├─ config/           # db.js, cloudinary.js — env-driven, no app logic
-│  ├─ models/           # Mongoose schemas
+│  ├─ models/           # Mongoose schemas: User, Post, Comment
 │  ├─ controllers/      # business logic per resource
 │  ├─ routes/           # Express routers, one file per resource
-│  ├─ middlewares/      # auth, validation, centralized error handling
-│  ├─ utils/            # ApiError, ApiResponse, asyncHandler, seedAdmin
+│  ├─ middlewares/      # auth, csrf, validation, centralized error handling
+│  ├─ utils/            # ApiError, ApiResponse, asyncHandler, sanitizeHtml, seedAdmin
 │  ├─ app.js            # Express app assembly (middleware + route mounting)
 │  └─ server.js         # entry point — connects DB, starts listener
 ├─ .env.example
@@ -31,10 +35,6 @@ server/
 └─ package.json
 ```
 
-Every file has a header comment marking it **REUSABLE CORE** (carry it into
-any new MEVN project unchanged) or **APP-SPECIFIC** (this is the piece to
-rewrite when you build something other than a blog — see the root README's
-"Reusing this skeleton" section for the full explanation).
 
 ## Getting started locally
 
@@ -73,6 +73,24 @@ vulnerabilities) without any extra compatibility shims — the
 `_handleFile` / `_removeFile` storage engine interface it relies on is
 unchanged between Multer 1.x and 2.x.
 
+Uploads are limited to 5MB and image mimetypes only, stored under
+`blog-app/post` (post cover images) or `blog-app/avatar`-style paths for
+avatars, resized/optimized on upload via a Cloudinary transformation.
+
+## CSRF protection
+
+`middlewares/csrf.js` runs before every route and rejects any non-safe
+method (anything but `GET`/`HEAD`/`OPTIONS`) unless the request's
+`Origin` header exactly matches `CLIENT_URL`. This is on top of, not
+instead of, the JWT auth check. Two practical implications:
+
+- **`CLIENT_URL` must be set correctly** in every environment (including
+  local dev — `http://localhost:5173` by default) or all writes will
+  fail with a 403, even successful logins.
+- **Tools like Postman/curl** won't send a browser `Origin` header by
+  default, so direct API testing of `POST`/`PUT`/`DELETE` routes needs an
+  `Origin` header set manually to match `CLIENT_URL`.
+
 ## Environment variables
 
 See `.env.example` for the full list and inline comments. Summary:
@@ -81,11 +99,14 @@ See `.env.example` for the full list and inline comments. Summary:
 |---|---|
 | `MONGO_URI` | MongoDB connection string |
 | `JWT_SECRET` / `JWT_EXPIRES_IN` | Token signing |
-| `CLIENT_URL` | Allowed CORS origin (your Vercel URL in production) |
+| `COOKIE_NAME` | Name of the httpOnly auth cookie |
+| `CLIENT_URL` | Allowed CORS origin **and** the value checked by the CSRF middleware (your Vercel URL in production) |
 | `CLOUDINARY_*` | Image upload credentials |
 | `ADMIN_*` | Used only by `npm run seed:admin` |
 
 ## API reference
+
+All routes are mounted at the **server root** — (i.e. the login route is `POST http://localhost:4000/auth/login`). 
 
 All responses follow the same envelope:
 
@@ -96,7 +117,7 @@ All responses follow the same envelope:
 Errors follow the same shape with `"success": false` and an optional
 `errors` array of `{ field, message }` for validation failures.
 
-### Auth — `/api/auth`
+### Auth — `/auth`
 
 | Method | Route | Auth | Description |
 |---|---|---|---|
@@ -105,29 +126,52 @@ Errors follow the same shape with `"success": false` and an optional
 | POST | `/logout` | — | Clears the auth cookie |
 | GET | `/me` | ✅ | Returns the current authenticated user |
 
-### Users — `/api/users`
+Auth routes are additionally rate-limited (30 requests / 15 min per IP).
+
+### Users — `/users`
 
 | Method | Route | Auth | Description |
 |---|---|---|---|
 | GET | `/` | ✅ admin | List all users |
 | GET | `/:username` | — | Public profile |
-| PUT | `/me` | ✅ | Update own `username` / `bio` |
+| PUT | `/me` | ✅ | Update own `bio` |
 | PUT | `/me/avatar` | ✅ | Upload avatar (`multipart/form-data`, field `avatar`) |
+| PUT | `/:id/role` | ✅ admin | Change a user's `role` to `user` or `admin` |
+| DELETE | `/:id` | ✅ admin | Delete a user |
 
-### Posts — `/api/posts`
+### Posts — `/posts`
 
 | Method | Route | Auth | Description |
 |---|---|---|---|
-| GET | `/` | — | List posts. Query: `page`, `limit`, `search`, `tag`, `author` |
-| GET | `/user/:username` | — | Posts by one author |
-| GET | `/:slug` | — | Single post |
+| GET | `/` | — | List published posts. Query: `page`, `limit`, `search`, `tag` |
+| GET | `/user/:username` | — | Published posts by one author |
+| GET | `/me` | ✅ | Current user's own posts, including drafts |
+| GET | `/admin` | ✅ admin | All posts, including every user's drafts |
+| GET | `/:slug` | optional | Single post by slug — drafts are only visible to their owner or an admin |
 | POST | `/` | ✅ | Create post (`multipart/form-data`: `title`, `content`, `tags`, `status`, `coverImage`) |
 | PUT | `/:slug` | ✅ owner/admin | Update post |
 | DELETE | `/:slug` | ✅ owner/admin | Delete post — **admins can delete any post** |
 
+Post `content` is sanitized server-side (`utils/sanitizeHtml.js`) before
+saving, and an `excerpt` is auto-generated from the first few paragraphs
+if one isn't provided. `search` matches against a MongoDB text index on
+`title`/`content`/`tags`, plus a username match, so searching by author
+name also works.
+
+### Comments — `/posts/:postId/comments` and `/comments`
+
+| Method | Route | Auth | Description |
+|---|---|---|---|
+| GET | `/posts/:postId/comments` | optional | List comments on a post. Drafts require the owner or an admin |
+| POST | `/posts/:postId/comments` | ✅ | Add a comment (`content`, optional `parentComment` for a reply, optional `mentionedUsername`) |
+| DELETE | `/comments/:commentId` | ✅ owner/admin | Delete a comment |
+
+Comments up to 1000 characters. `parentComment` links a reply to another
+comment for simple threading.
+
 ### Health
 
-`GET /api/health` — uptime check, useful for Render health checks / uptime pings.
+`GET /health` — uptime check, useful for Render health checks / uptime pings.
 
 ## Error handling
 
@@ -145,6 +189,6 @@ errors into consistent JSON responses. Stack traces are only included when
 3. Build command: `npm install`. Start command: `npm start`.
 4. Add the environment variables from `.env.example` under the service's
    **Environment** tab (or use the included `render.yaml` Blueprint).
-5. Once deployed, copy the Render URL into your client's
-   `VITE_API_URL=.../api`, and set this service's `CLIENT_URL` to your
-   Vercel domain so CORS + cookies work.
+5. Once deployed, copy the Render URL into your client's `VITE_API_URL`, and set this service's
+   `CLIENT_URL` to your Vercel domain so CORS, cookies, and the CSRF
+   check all work correctly.
