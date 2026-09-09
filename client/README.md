@@ -6,9 +6,12 @@ MEVN project. Deployed to **Vercel**.
 ## Stack
 
 - **Vue 3** + **Vite**
-- **Vue Router 4** — with `requiresAuth` / `requiresGuest` navigation guards
+- **Vue Router 4** — with `requiresAuth` / `requiresGuest` / `requiresAdmin`
+  navigation guards
 - **Pinia** — state management
 - **Axios** — API client with interceptors
+- **Tiptap** — rich-text editor for post content (`@tiptap/vue-3`,
+  `starter-kit`, `extension-link`)
 - **Bootstrap 5** + **Bootstrap Icons** — layout/components/iconography
 - Custom **design-token CSS** (`variables.css` + `global.css`) layered on
   top of Bootstrap
@@ -23,16 +26,19 @@ client/
 │  │  └─ global.css      # base styles + utility classes, consumes the tokens
 │  ├─ components/
 │  │  ├─ common/         # BaseButton, BaseInput, BaseAlert, BaseCard, BaseLoader,
-│  │  │                  # BasePagination, EmptyState, ConfirmModal — generic, reusable
-│  │  ├─ blog/           # PostCard, PostForm — app-specific
-│  │  └─ layout/         # AppNavbar, AppFooter
-│  ├─ views/              # one component per route
-│  ├─ router/index.js     # routes + auth guards
-│  ├─ store/              # Pinia stores (auth.js reusable, post.js app-specific)
-│  ├─ services/           # axios wrappers — api.js core, *.service.js per resource
+│  │  │                  # BasePagination, BaseSearch, EmptyState, ConfirmModal,
+│  │  │                  # ImageCropper — generic, reusable
+│  │  ├─ blog/            # PostCard, PostForm (Tiptap editor), CommentSection — app-specific
+│  │  ├─ admin/            # AdminStatCard, AdminPostTable, AdminUserTable — app-specific
+│  │  └─ layout/           # AppNavbar, AppFooter
+│  ├─ views/               # one component per route (Home, PostDetail, PostCreate,
+│  │                        # PostEdit, Dashboard, Admin, Profile, Login, Register, NotFound)
+│  ├─ router/index.js       # routes + auth/admin guards
+│  ├─ store/                # Pinia stores (auth.js reusable, post.js app-specific)
+│  ├─ services/             # axios wrappers — api.js core, auth/user/post/comment services
 │  └─ main.js / App.vue
 ├─ index.html
-├─ vercel.json             # SPA rewrite rule
+├─ vercel.json               # SPA rewrite rule
 └─ package.json
 ```
 
@@ -49,7 +55,8 @@ npm run dev                 # http://localhost:5173
 
 | Variable | Purpose |
 |---|---|
-| `VITE_API_URL` | Base URL of the backend API, e.g. `http://localhost:4000/api` in dev, your Render URL in production |
+| `VITE_API_URL` | Base URL of the backend API : the server mounts its routes at the root (e.g. `.../auth/login`, `.../posts`). Use `http://localhost:4000` in dev, your Render URL in production |
+
 
 ## Design system
 
@@ -65,6 +72,22 @@ components.
 **To re-skin the app** (or reuse this skeleton for a different project),
 edit the values in `variables.css` only — colors, fonts, spacing all
 propagate from there.
+
+## Key components
+
+- **`PostForm.vue`** — create/edit form for posts, built around the
+  Tiptap rich-text editor (`@tiptap/vue-3` + `starter-kit` + the `Link`
+  extension) instead of a plain textarea.
+- **`ImageCropper.vue`** (common) — client-side crop step used before an
+  avatar or cover image is uploaded, so users can frame the image before
+  it's sent to Cloudinary.
+- **`CommentSection.vue`** (blog) — lists a post's comments, supports
+  posting a top-level comment or a reply (`parentComment`), and lets the
+  comment's author or an admin delete it.
+- **`AdminStatCard.vue` / `AdminPostTable.vue` / `AdminUserTable.vue`**
+  (admin) — the building blocks of `views/Admin.vue`: summary stats, a
+  table of every post (including drafts) with delete actions, and a
+  table of every user with role-change/delete actions.
 
 ## State management
 
@@ -82,6 +105,13 @@ Route `meta` flags drive a single global guard in `router/index.js`:
   not authenticated (used by post create/edit, dashboard).
 - `meta: { requiresGuest: true }` — redirects authenticated users away
   from `/login` and `/register`.
+- `meta: { requiresAuth: true, requiresAdmin: true }` — used by `/admin`;
+  redirects non-admins home.
+
+Routes at a glance: `/` (home/post list), `/posts/:slug` (post detail),
+`/posts/new` and `/posts/:slug/edit` (auth), `/profile/:username`
+(public), `/dashboard` (auth — the current user's own posts), `/admin`
+(admin only), `/login` and `/register` (guest only).
 
 ## Deploying to Vercel
 
@@ -91,6 +121,7 @@ Route `meta` flags drive a single global guard in `router/index.js`:
 3. Framework preset: Vite. Build command: `npm run build`. Output
    directory: `dist`.
 4. Add environment variable `VITE_API_URL` pointing at your deployed
-   Render backend (include the `/api` suffix).
+   Render backend (see Environment
+   variables above).
 5. `vercel.json` already includes the SPA rewrite so client-side routes
    (e.g. `/posts/my-post-slug`) don't 404 on refresh.

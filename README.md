@@ -22,16 +22,32 @@ project as a whole.
 - Register with email, username, and password
 - Secure login (JWT in an httpOnly cookie, with a Bearer-token fallback)
 - Passwords hashed with bcrypt, never stored or returned in plain text
+- CSRF protection on all unsafe requests (checks the request `Origin`
+  against the configured client URL)
 
 **Blog post management (CRUD)**
 - Create, read, update, and delete posts — each with a title, rich-text
-  content, cover image, tags, author, and creation date
+  content (Tiptap editor), cover image, tags, author, and creation date
 - Auto-generated slugs and excerpts
+- Draft / published status, with drafts visible only to their author and
+  admins
 
-**Access rules**
-- Anyone (logged in or not) can browse all posts and view a single post
-- Logged-in users can create posts, and edit/delete their **own** posts
-- Admins can delete **any** post, and can list all registered users
+**Comments**
+- Threaded comments on posts (replies via `parentComment`), with optional
+  `@mention` support
+- Comment authors and admins can delete a comment; anyone can read
+  comments on a published post
+
+**User profiles**
+- Public profile pages (`/profile/:username`) showing a user's bio,
+  avatar, and published posts
+- Users can update their own bio and upload/crop an avatar image
+  (client-side cropping before upload)
+
+**Admin dashboard**
+- Stat cards, a full post table (including drafts), and a user table
+- Promote/demote users between `user` and `admin`
+- Delete any user or any post
 
 **Other**
 - Centralized error handling with a consistent JSON response envelope
@@ -67,7 +83,7 @@ npm run dev              # http://localhost:4000
 
 # Terminal 2 — frontend
 cd client
-cp .env.example .env    # VITE_API_URL=http://localhost:4000/api
+cp .env.example .env    # VITE_API_URL=http://localhost:4000
 npm install
 npm run dev              # http://localhost:5173
 ```
@@ -81,6 +97,15 @@ You'll need:
 
 Optionally seed an admin account — see `server/README.md`.
 
+> **Note:** the API routes are mounted at the server root (`/auth`,
+> `/users`, `/posts`, `/posts/:postId/comments`, `/comments`), set `VITE_API_URL` to the bare host
+> (`http://localhost:4000` locally, or your Render URL in production)
+> instead. See `server/README.md` → API reference for the full route list.
+
+## Try it out
+
+A live demo is deployed at [`https://blog-app-seven-hazel.vercel.app/`]. You're welcome to register your own account, or email me to request a test username/password — useful if you want to try admin-only features (the /admin dashboard, deleting other users' posts, etc.) without going through the npm run seed:admin script yourself.
+
 ## Deployment
 
 | Piece | Platform | Notes |
@@ -90,51 +115,23 @@ Optionally seed an admin account — see `server/README.md`.
 | Images | [Cloudinary](https://cloudinary.com) | credentials live only in the server's env vars |
 
 Deploy the backend first, then point the frontend's `VITE_API_URL` at the
-live Render URL, and the backend's `CLIENT_URL` at the live Vercel URL
-(required for CORS + cookies to work correctly).
+live Render URL, and the backend's
+`CLIENT_URL` at the live Vercel URL (required for CORS, cookies, and CSRF
+checks to work correctly).
 
-## Reusing this skeleton for a different project
 
-This codebase was deliberately split into two layers:
-
-1. **Reusable core** — auth (register/login/logout/JWT), the
-   `User` model, centralized error handling (`ApiError` / `ApiResponse` /
-   `asyncHandler`), the Cloudinary upload config, the Axios wrapper, the
-   Pinia auth store, the router's guard pattern, and the whole
-   `components/common/` library (buttons, inputs, alerts, cards, modals,
-   pagination, empty states). None of these files know anything about
-   "blog posts" — every file that's part of the core has a header comment
-   saying **REUSABLE CORE**.
-2. **App-specific layer** — everything about `Post`: the model, its
-   controller/routes, `PostForm`/`PostCard`, the `post` Pinia store, and
-   the blog-flavored views (`Home`, `PostDetail`, `PostCreate`,
-   `PostEdit`, `Dashboard`). These files are marked **APP-SPECIFIC** in
-   their header comments.
-
-To repurpose this for, say, a recipe app:
-
-1. Copy the repo, rename `Post` → `Recipe` throughout `models/`,
-   `controllers/`, `routes/` on the backend, and `post.service.js` /
-   `store/post.js` / `components/blog/` on the frontend — swap the fields
-   to match (e.g. `ingredients`, `cookTime` instead of `tags`).
-2. Everything under **reusable core** (auth, error handling, the
-   component library, the design-token CSS) stays as-is.
-3. Retheme instantly by editing only
-   `client/src/assets/styles/variables.css`.
-4. Update the two READMEs' feature lists and you have a new app running
-   on the same skeleton.
 
 ## Tech stack summary
 
 | Layer | Technology |
 |---|---|
-| Frontend | Vue 3, Vite, Vue Router, Pinia, Axios, Bootstrap 5, Bootstrap Icons |
+| Frontend | Vue 3, Vite, Vue Router, Pinia, Axios, Tiptap (rich-text editor), Bootstrap 5, Bootstrap Icons |
 | Backend | Node.js, Express, Mongoose |
 | Database | MongoDB |
-| Auth | JWT (httpOnly cookie + Bearer fallback), bcrypt |
-| Image hosting | Cloudinary (via Multer storage engine) |
+| Auth | JWT (httpOnly cookie + Bearer fallback), bcrypt, CSRF origin check |
+| Image hosting | Cloudinary (via a custom Multer storage engine) |
 | Hosting | Vercel (client), Render (server) |
 
 ## License
 
-MIT — use this skeleton freely for your own projects.
+Fritz Cabalhin

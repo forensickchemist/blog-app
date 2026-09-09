@@ -168,6 +168,41 @@
 
           </template>
 
+
+          <!-- ======================================================
+               THEME TOGGLE
+               ====================================================== -->
+          <li class="app-navbar__item">
+            <button
+              type="button"
+              class="app-navbar__theme-toggle"
+              :aria-label="
+                theme === 'dark'
+                  ? 'Switch to light mode'
+                  : 'Switch to dark mode'
+              "
+              :title="
+                theme === 'dark'
+                  ? 'Switch to light mode'
+                  : 'Switch to dark mode'
+              "
+              @click="toggleTheme"
+            >
+              <i
+                class="bi"
+                :class="
+                  theme === 'dark'
+                    ? 'bi-sun-fill'
+                    : 'bi-moon-fill'
+                "
+              ></i>
+
+              <span>
+                {{ theme === "dark" ? "Light" : "Dark" }}
+              </span>
+            </button>
+          </li>
+
         </ul>
       </div>
 
@@ -180,12 +215,18 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../store/auth";
+import { useTheme } from "../../composables/useTheme";
 
 
 const auth = useAuthStore();
 const router = useRouter();
 
 const isOpen = ref(false);
+
+const {
+  theme,
+  toggleTheme,
+} = useTheme();
 
 
 const toggleMenu = () => {
@@ -217,6 +258,11 @@ const handleLogout = async () => {
   background-color: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   box-shadow: var(--shadow-sm);
+
+  transition:
+    background-color var(--transition-normal),
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal);
 }
 
 
@@ -312,8 +358,9 @@ const handleLogout = async () => {
 }
 
 .app-navbar__toggle:hover {
-  background-color: var(--color-surface-muted);
-  border-color: var(--color-border-strong);
+  background-color: var(--color-bg-hover);
+  border-color: var(--color-border-dark);
+  color: var(--color-text);
 }
 
 .app-navbar__toggle:focus-visible {
@@ -384,12 +431,12 @@ const handleLogout = async () => {
 }
 
 .app-navbar__link:hover {
-  background-color: var(--color-surface-muted);
+  background-color: var(--color-bg-hover);
   color: var(--color-text);
 }
 
 .app-navbar__link.router-link-active {
-  background-color: var(--color-primary-subtle);
+  background-color: var(--color-primary-lighter);
   color: var(--color-primary);
 }
 
@@ -405,6 +452,58 @@ const handleLogout = async () => {
 
 .app-navbar__logout {
   appearance: none;
+}
+
+
+/* ================================================================
+   THEME TOGGLE
+   ================================================================ */
+
+.app-navbar__theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+
+  width: 100%;
+
+  padding: 0.6rem 0.75rem;
+
+  border: 0;
+  border-radius: var(--radius-md);
+
+  background: transparent;
+  color: var(--color-text-muted);
+
+  font: inherit;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-normal);
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.app-navbar__theme-toggle:hover {
+  background-color: var(--color-bg-hover);
+  color: var(--color-text);
+}
+
+.app-navbar__theme-toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--input-focus-ring);
+}
+
+.app-navbar__theme-toggle i {
+  width: 1.1rem;
+
+  color: var(--color-secondary);
+  text-align: center;
 }
 
 
@@ -504,6 +603,16 @@ const handleLogout = async () => {
     width: auto;
 
     padding: 0.5rem 0.7rem;
+  }
+
+  .app-navbar__theme-toggle {
+    width: auto;
+
+    padding: 0.5rem 0.7rem;
+  }
+
+  .app-navbar__theme-toggle span {
+    display: none;
   }
 
   .app-navbar__signup {
