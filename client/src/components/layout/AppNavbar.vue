@@ -168,14 +168,13 @@
 
           </template>
 
-
           <!-- ======================================================
-               THEME TOGGLE
-               ====================================================== -->
+              THEME TOGGLE
+              ====================================================== -->
           <li class="app-navbar__item">
             <button
               type="button"
-              class="app-navbar__theme-toggle"
+              class="app-navbar__link app-navbar__theme-toggle"
               :aria-label="
                 theme === 'dark'
                   ? 'Switch to light mode'
@@ -454,56 +453,22 @@ const handleLogout = async () => {
   appearance: none;
 }
 
-
 /* ================================================================
    THEME TOGGLE
    ================================================================ */
 
 .app-navbar__theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-
-  width: 100%;
-
-  padding: 0.6rem 0.75rem;
-
-  border: 0;
-  border-radius: var(--radius-md);
-
-  background: transparent;
-  color: var(--color-text-muted);
-
-  font: inherit;
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
-  line-height: var(--lh-normal);
-
-  text-align: left;
-
-  cursor: pointer;
-
-  transition:
-    background-color var(--transition-fast),
-    color var(--transition-fast);
-}
-
-.app-navbar__theme-toggle:hover {
-  background-color: var(--color-bg-hover);
-  color: var(--color-text);
-}
-
-.app-navbar__theme-toggle:focus-visible {
-  outline: none;
-  box-shadow: var(--input-focus-ring);
+  appearance: none;
 }
 
 .app-navbar__theme-toggle i {
-  width: 1.1rem;
-
   color: var(--color-secondary);
-  text-align: center;
+  font-size: var(--fs-md);
+  transition: color var(--transition-fast);
+}
+
+.app-navbar__theme-toggle:hover i {
+  color: var(--color-secondary-light);
 }
 
 
