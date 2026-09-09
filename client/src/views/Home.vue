@@ -9,7 +9,7 @@
           Shared Notes
         </h1>
 
-        <p class="text-muted-app mb-0">
+        <p class="text-app-muted mb-0">
           Fresh writing from the whole community.
         </p>
       </div>

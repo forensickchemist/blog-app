@@ -1,18 +1,7 @@
 /* =========================================================
    DESIGN TOKENS
    Central source of truth for the application UI.
-
-   Visual direction:
-   - Apple-inspired
-   - Editorial / modern blog aesthetic
-   - Clean, soft, premium
-   - Youthful without feeling childish
-   - High contrast where it matters
-   - Restrained use of accent colors
-   ========================================================= */
-
-
-/* =========================================================
+   =========================================================
    COLORS
    ========================================================= */
 
@@ -483,4 +472,70 @@
 
   --bs-link-color: var(--color-primary);
   --bs-link-hover-color: var(--color-primary-dark);
+}
+
+/* =========================================================
+   BADGES & PILLS
+   ========================================================= */
+
+:root {
+  /* Base badge sizing */
+  --badge-height: 24px;
+  --badge-height-sm: 22px;
+  --badge-height-lg: 28px;
+
+  --badge-padding-x: var(--space-2);
+  --badge-padding-x-sm: var(--space-2);
+  --badge-padding-x-lg: var(--space-3);
+
+  --badge-radius: var(--radius-pill);
+
+  --badge-font-size: var(--fs-2xs);
+  --badge-font-size-sm: var(--fs-2xs);
+  --badge-font-size-lg: var(--fs-xs);
+
+  --badge-font-weight: var(--fw-semibold);
+
+  /* -------------------------------------------------------
+     Admin
+     ------------------------------------------------------- */
+
+  --badge-admin-bg: var(--color-primary);
+  --badge-admin-text: var(--color-text-inverse);
+
+  /* -------------------------------------------------------
+     User
+     ------------------------------------------------------- */
+
+  --badge-user-bg: var(--color-surface-alt);
+  --badge-user-text: var(--color-text-muted);
+  --badge-user-border: var(--color-border);
+
+  /* -------------------------------------------------------
+     Published
+     ------------------------------------------------------- */
+
+  --badge-published-bg: var(--color-success-light);
+  --badge-published-text: var(--color-success-dark);
+
+  /* -------------------------------------------------------
+     Draft
+     ------------------------------------------------------- */
+
+  --badge-draft-bg: var(--color-warning-light);
+  --badge-draft-text: var(--color-warning-dark);
+
+  /* -------------------------------------------------------
+     Tags
+     ------------------------------------------------------- */
+
+  --tag-height: 28px;
+  --tag-padding-x: var(--space-3);
+  --tag-radius: var(--radius-pill);
+
+  --tag-bg: var(--color-primary-lighter);
+  --tag-text: var(--color-primary);
+
+  --tag-font-size: var(--fs-xs);
+  --tag-font-weight: var(--fw-medium);
 }

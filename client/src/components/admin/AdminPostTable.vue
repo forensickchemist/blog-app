@@ -40,14 +40,17 @@
 
             <td>
               <span
-                class="admin-post-table__status"
-                :class="
-                  post.status === 'published'
-                    ? 'admin-post-table__status--published'
-                    : 'admin-post-table__status--draft'
-                "
+                v-if="post.status === 'published'"
+                class="app-badge app-badge--published"
               >
-                {{ post.status }}
+                Published
+              </span>
+
+              <span
+                v-else
+                class="app-badge app-badge--draft"
+              >
+                Draft
               </span>
             </td>
 
@@ -114,7 +117,7 @@ const formatDate = (date) => {
   min-width: 700px;
   margin: 0;
   border-collapse: collapse;
-  color: var(--color-text-primary);
+  color: var(--color-text);
   font-size: var(--fs-sm);
 }
 
@@ -144,7 +147,7 @@ const formatDate = (date) => {
 }
 
 .admin-post-table__row:hover {
-  background: var(--color-surface-alt);
+  background: var(--color-bg-hover);
 }
 
 .admin-post-table__table td {
@@ -167,30 +170,6 @@ const formatDate = (date) => {
   white-space: nowrap;
 }
 
-.admin-post-table__status {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 1.75rem;
-  padding: 0 var(--space-3);
-  border-radius: var(--radius-pill);
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-semibold);
-  line-height: 1;
-  text-transform: capitalize;
-  white-space: nowrap;
-}
-
-.admin-post-table__status--published {
-  color: var(--color-success-dark);
-  background: var(--color-success-light);
-}
-
-.admin-post-table__status--draft {
-  color: var(--color-text-muted);
-  background: var(--color-surface-alt);
-}
-
 .admin-post-table__actions-heading,
 .admin-post-table__actions {
   text-align: right;
@@ -198,15 +177,6 @@ const formatDate = (date) => {
 
 .admin-post-table__actions {
   white-space: nowrap;
-}
-
-[data-theme="dark"] .admin-post-table__head {
-  background: var(--color-surface-alt);
-}
-
-[data-theme="dark"] .admin-post-table__status--published {
-  color: var(--color-success);
-  background: var(--color-success-dark);
 }
 
 @media (max-width: 767.98px) {

@@ -466,3 +466,62 @@ mark {
     scroll-behavior: auto !important;
   }
 }
+
+/* =========================================================
+   BADGES
+   ========================================================= */
+
+.app-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-height: var(--badge-height);
+  padding: 0 var(--badge-padding-x);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--badge-radius);
+  font-size: var(--badge-font-size);
+  font-weight: var(--badge-font-weight);
+  line-height: var(--lh-none);
+  white-space: nowrap;
+}
+
+.app-badge--admin {
+  background: var(--badge-admin-bg);
+  color: var(--badge-admin-text);
+}
+
+.app-badge--user {
+  background: var(--badge-user-bg);
+  color: var(--badge-user-text);
+  border-color: var(--badge-user-border);
+}
+
+.app-badge--published {
+  background: var(--badge-published-bg);
+  color: var(--badge-published-text);
+}
+
+.app-badge--draft {
+  background: var(--badge-draft-bg);
+  color: var(--badge-draft-text);
+}
+
+
+/* =========================================================
+   TAGS
+   ========================================================= */
+
+.app-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tag-height);
+  padding: 0 var(--tag-padding-x);
+  border-radius: var(--tag-radius);
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  font-size: var(--tag-font-size);
+  font-weight: var(--tag-font-weight);
+  line-height: var(--lh-none);
+  white-space: nowrap;
+}
