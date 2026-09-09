@@ -1,6 +1,14 @@
 /* =========================================================
    DESIGN TOKENS
    Central source of truth for the application UI.
+
+   Visual direction:
+   - Apple-inspired
+   - Editorial / modern blog aesthetic
+   - Clean, soft, premium
+   - Youthful without feeling childish
+   - High contrast where it matters
+   - Restrained use of accent colors
    ========================================================= */
 
 
@@ -8,65 +16,90 @@
    COLORS
    ========================================================= */
 
-/* Brand */
+/* ---------------------------------------------------------
+   Light Theme
+   --------------------------------------------------------- */
+
 :root {
-  --color-primary: #173f35;
-  --color-primary-dark: #0d2b24;
-  --color-primary-light: #3f7567;
-  --color-primary-lighter: #e2f0eb;
+  /* Brand */
+  --color-primary: #007aff;
+  --color-primary-dark: #0066d6;
+  --color-primary-light: #5ac8fa;
+  --color-primary-lighter: #eaf5ff;
 
-  --color-secondary: #ffcf4a;
-  --color-secondary-dark: #dcae25;
-  --color-secondary-light: #ffe58a;
+  /* Secondary */
+  --color-secondary: #ffcc00;
+  --color-secondary-dark: #d9a900;
+  --color-secondary-light: #ffe680;
 
-  --color-accent: #f06a6a;
-  --color-accent-dark: #d94d52;
-  --color-accent-light: #ff9a98;
+  /* Accent */
+  --color-accent: #ff375f;
+  --color-accent-dark: #e52d50;
+  --color-accent-light: #ff8fa8;
 
-  --color-purple: #8b7cf6;
+  /* Supporting accent */
+  --color-purple: #af52de;
 
-  /* Feedback */
-  --color-success: #2f855a;
-  --color-success-dark: #276749;
-  --color-success-light: #c6f6d5;
+  /* -------------------------------------------------------
+     Feedback
+     ------------------------------------------------------- */
 
-  --color-danger: #c53030;
-  --color-danger-dark: #9b2c2c;
-  --color-danger-light: #fed7d7;
+  --color-success: #34c759;
+  --color-success-dark: #248a3d;
+  --color-success-light: #e8f8ed;
 
-  --color-warning: #b7791f;
-  --color-warning-dark: #975a16;
-  --color-warning-light: #fefcbf;
+  --color-danger: #ff3b30;
+  --color-danger-dark: #d70015;
+  --color-danger-light: #fff0ef;
 
-  --color-info: #2b6cb0;
-  --color-info-dark: #2c5282;
-  --color-info-light: #bee3f8;
+  --color-warning: #ff9500;
+  --color-warning-dark: #c93400;
+  --color-warning-light: #fff4e5;
 
-  /* Highlights */
-  --color-highlight: #fff3bf;
-  --color-highlight-dark: #ffe066;
+  --color-info: #5ac8fa;
+  --color-info-dark: #0077b6;
+  --color-info-light: #e8f8ff;
 
-  /* Backgrounds / Surfaces */
-  --color-bg: #f7f7f2;
+  /* -------------------------------------------------------
+     Highlights
+     ------------------------------------------------------- */
+
+  --color-highlight: #fff8d6;
+  --color-highlight-dark: #ffe66d;
+
+  /* -------------------------------------------------------
+     Backgrounds / Surfaces
+     ------------------------------------------------------- */
+
+  --color-bg: #f5f5f7;
   --color-surface: #ffffff;
-  --color-surface-alt: #f0f2ec;
+  --color-surface-alt: #f2f2f7;
 
-  --color-bg-hover: #eeefe9;
-  --color-bg-active: #e4e6df;
+  --color-bg-hover: #eaeaef;
+  --color-bg-active: #dedee5;
 
-  /* Borders */
-  --color-border: #dfe2da;
-  --color-border-light: #eceee8;
-  --color-border-dark: #c8ccc2;
+  /* -------------------------------------------------------
+     Borders
+     ------------------------------------------------------- */
 
-  /* Text */
-  --color-text: #1f2925;
-  --color-text-muted: #68736d;
-  --color-text-light: #8b948f;
+  --color-border: #d2d2d7;
+  --color-border-light: #e5e5ea;
+  --color-border-dark: #b8b8be;
+
+  /* -------------------------------------------------------
+     Text
+     ------------------------------------------------------- */
+
+  --color-text: #1d1d1f;
+  --color-text-muted: #6e6e73;
+  --color-text-light: #8e8e93;
   --color-text-inverse: #ffffff;
 
-  /* Overlay */
-  --color-overlay: rgba(0, 0, 0, 0.5);
+  /* -------------------------------------------------------
+     Overlay
+     ------------------------------------------------------- */
+
+  --color-overlay: rgba(0, 0, 0, 0.45);
 }
 
 
@@ -76,11 +109,19 @@
 
 :root {
   /* Font families */
-  --font-heading: "DM Sans", "Inter", system-ui, sans-serif;
-  --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
+  --font-heading: "DM Sans", "Inter", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
 
-  /* Font sizes */
+  --font-body: "Inter", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --font-mono: "SFMono-Regular", "SF Mono", "IBM Plex Mono",
+    Consolas, monospace;
+
+  /* -------------------------------------------------------
+     Font sizes
+     ------------------------------------------------------- */
+
   --fs-2xs: 0.6875rem;
   --fs-xs: 0.75rem;
   --fs-sm: 0.875rem;
@@ -92,18 +133,24 @@
   --fs-4xl: 2.25rem;
   --fs-5xl: 3rem;
 
-  /* Font weights */
+  /* -------------------------------------------------------
+     Font weights
+     ------------------------------------------------------- */
+
   --fw-regular: 400;
   --fw-medium: 500;
   --fw-semibold: 600;
   --fw-bold: 700;
   --fw-extrabold: 800;
 
-  /* Line heights */
+  /* -------------------------------------------------------
+     Line heights
+     ------------------------------------------------------- */
+
   --lh-none: 1;
-  --lh-tight: 1.25;
+  --lh-tight: 1.2;
   --lh-normal: 1.5;
-  --lh-relaxed: 1.75;
+  --lh-relaxed: 1.7;
 }
 
 
@@ -146,6 +193,7 @@
    ========================================================= */
 
 :root {
+  /* Containers */
   --container-sm: 540px;
   --container-md: 720px;
   --container-lg: 960px;
@@ -172,10 +220,10 @@
   --border-width: 1px;
   --border-width-thick: 2px;
 
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
   --radius-pill: 999px;
 }
 
@@ -185,10 +233,17 @@
    ========================================================= */
 
 :root {
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.12);
+  --shadow-sm:
+    0 1px 2px rgba(0, 0, 0, 0.04);
+
+  --shadow-md:
+    0 4px 12px rgba(0, 0, 0, 0.06);
+
+  --shadow-lg:
+    0 10px 30px rgba(0, 0, 0, 0.08);
+
+  --shadow-xl:
+    0 20px 50px rgba(0, 0, 0, 0.12);
 }
 
 
@@ -231,8 +286,8 @@
   --input-padding-x: var(--space-3);
   --input-padding-y: var(--space-2);
 
-  --input-focus-ring: 0 0 0 3px
-    rgba(23, 63, 53, 0.15);
+  --input-focus-ring:
+    0 0 0 3px rgba(0, 122, 255, 0.18);
 }
 
 
@@ -278,28 +333,28 @@
 
 /* =========================================================
    BOOTSTRAP COMPATIBILITY
-   These variables allow Bootstrap utilities/components that
-   remain in the project to visually align with the design system.
+   These variables allow remaining Bootstrap utilities/
+   components to visually align with the design system.
    ========================================================= */
 
 :root {
   --bs-primary: var(--color-primary);
-  --bs-primary-rgb: 23, 63, 53;
+  --bs-primary-rgb: 0, 122, 255;
 
   --bs-secondary: var(--color-secondary);
-  --bs-secondary-rgb: 255, 207, 74;
+  --bs-secondary-rgb: 255, 204, 0;
 
   --bs-success: var(--color-success);
-  --bs-success-rgb: 47, 133, 90;
+  --bs-success-rgb: 52, 199, 89;
 
   --bs-danger: var(--color-danger);
-  --bs-danger-rgb: 197, 48, 48;
+  --bs-danger-rgb: 255, 59, 48;
 
   --bs-warning: var(--color-warning);
-  --bs-warning-rgb: 183, 121, 31;
+  --bs-warning-rgb: 255, 149, 0;
 
   --bs-info: var(--color-info);
-  --bs-info-rgb: 43, 108, 176;
+  --bs-info-rgb: 90, 200, 250;
 
   --bs-body-bg: var(--color-bg);
   --bs-body-color: var(--color-text);
@@ -316,83 +371,110 @@
    ========================================================= */
 
 [data-theme="dark"] {
-  /* Brand */
-  --color-primary: #6fae9d;
-  --color-primary-dark: #8ac1b1;
-  --color-primary-light: #4d8d7d;
-  --color-primary-lighter: #19352e;
+  /* -------------------------------------------------------
+     Brand
+     ------------------------------------------------------- */
 
-  --color-secondary: #ffd968;
-  --color-secondary-dark: #e5b92f;
-  --color-secondary-light: #ffe89c;
+  --color-primary: #0a84ff;
+  --color-primary-dark: #409cff;
+  --color-primary-light: #64d2ff;
+  --color-primary-lighter: #102a43;
 
-  --color-accent: #ff8585;
-  --color-accent-dark: #eb6468;
-  --color-accent-light: #ffaaa8;
+  /* Secondary */
+  --color-secondary: #ffd60a;
+  --color-secondary-dark: #ffb800;
+  --color-secondary-light: #ffe66d;
 
-  --color-purple: #a99dff;
+  /* Accent */
+  --color-accent: #ff375f;
+  --color-accent-dark: #ff2d55;
+  --color-accent-light: #ff6482;
 
-  /* Feedback */
-  --color-success: #68d391;
-  --color-success-dark: #48bb78;
-  --color-success-light: #1c4532;
+  /* Supporting accent */
+  --color-purple: #bf5af2;
 
-  --color-danger: #fc8181;
-  --color-danger-dark: #f56565;
-  --color-danger-light: #4a2020;
+  /* -------------------------------------------------------
+     Feedback
+     ------------------------------------------------------- */
 
-  --color-warning: #f6c453;
-  --color-warning-dark: #d69e2e;
-  --color-warning-light: #4a3a18;
+  --color-success: #30d158;
+  --color-success-dark: #34c759;
+  --color-success-light: #12351e;
 
-  --color-info: #63b3ed;
-  --color-info-dark: #4299e1;
-  --color-info-light: #1c3448;
+  --color-danger: #ff453a;
+  --color-danger-dark: #ff6961;
+  --color-danger-light: #3a1715;
 
-  /* Highlights */
-  --color-highlight: #4a421d;
-  --color-highlight-dark: #665a20;
+  --color-warning: #ff9f0a;
+  --color-warning-dark: #ffb340;
+  --color-warning-light: #38240a;
 
-  /* Backgrounds / Surfaces */
-  --color-bg: #111715;
-  --color-surface: #18201d;
-  --color-surface-alt: #202a26;
+  --color-info: #64d2ff;
+  --color-info-dark: #0a84ff;
+  --color-info-light: #102d3a;
 
-  --color-bg-hover: #26322d;
-  --color-bg-active: #2d3a35;
+  /* -------------------------------------------------------
+     Highlights
+     ------------------------------------------------------- */
 
-  /* Borders */
-  --color-border: #303b36;
-  --color-border-light: #252e2a;
-  --color-border-dark: #46524c;
+  --color-highlight: #3a3515;
+  --color-highlight-dark: #665d1b;
 
-  /* Text */
-  --color-text: #edf2ef;
-  --color-text-muted: #a9b3ae;
-  --color-text-light: #7f8b85;
-  --color-text-inverse: #111715;
+  /* -------------------------------------------------------
+     Backgrounds / Surfaces
+     ------------------------------------------------------- */
 
-  /* Overlay */
-  --color-overlay: rgba(0, 0, 0, 0.7);
+  --color-bg: #000000;
+  --color-surface: #1c1c1e;
+  --color-surface-alt: #2c2c2e;
 
-  /* Bootstrap compatibility */
+  --color-bg-hover: #2c2c2e;
+  --color-bg-active: #3a3a3c;
+
+  /* -------------------------------------------------------
+     Borders
+     ------------------------------------------------------- */
+
+  --color-border: #38383a;
+  --color-border-light: #2c2c2e;
+  --color-border-dark: #48484a;
+
+  /* -------------------------------------------------------
+     Text
+     ------------------------------------------------------- */
+
+  --color-text: #f5f5f7;
+  --color-text-muted: #98989d;
+  --color-text-light: #636366;
+  --color-text-inverse: #000000;
+
+  /* -------------------------------------------------------
+     Overlay
+     ------------------------------------------------------- */
+
+  --color-overlay: rgba(0, 0, 0, 0.72);
+
+  /* -------------------------------------------------------
+     Bootstrap compatibility
+     ------------------------------------------------------- */
+
   --bs-primary: var(--color-primary);
-  --bs-primary-rgb: 111, 174, 157;
+  --bs-primary-rgb: 10, 132, 255;
 
   --bs-secondary: var(--color-secondary);
-  --bs-secondary-rgb: 255, 217, 104;
+  --bs-secondary-rgb: 255, 214, 10;
 
   --bs-success: var(--color-success);
-  --bs-success-rgb: 104, 211, 145;
+  --bs-success-rgb: 48, 209, 88;
 
   --bs-danger: var(--color-danger);
-  --bs-danger-rgb: 252, 129, 129;
+  --bs-danger-rgb: 255, 69, 58;
 
   --bs-warning: var(--color-warning);
-  --bs-warning-rgb: 246, 196, 83;
+  --bs-warning-rgb: 255, 159, 10;
 
   --bs-info: var(--color-info);
-  --bs-info-rgb: 99, 179, 237;
+  --bs-info-rgb: 100, 210, 255;
 
   --bs-body-bg: var(--color-bg);
   --bs-body-color: var(--color-text);
